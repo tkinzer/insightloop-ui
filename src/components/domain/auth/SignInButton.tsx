@@ -1,22 +1,15 @@
-import { GoogleAuthProvider, signInWithRedirect } from "firebase/auth";
-import { useAuth } from "~/lib/firebase";
+import { GoogleAuthProvider, signInWithPopup, signInWithRedirect } from 'firebase/auth';
 
 export const SignInButton = () => {
-  const handleClick = () => {
-    const provider = new GoogleAuthProvider();
-    const auth = useAuth();
-    // @see https://firebase.google.com/docs/auth/web/google-signin
-    auth.languageCode = "ja";
+  const provider = new GoogleAuthProvider();
+  // provider.addScope('https://www.googleapis.com/auth/contacts.readonly');
 
-    signInWithRedirect(auth, provider);
+  const handleClick = () => {
+    // signInWithRedirect(auth, provider);
   };
 
   return (
-    <button
-      onClick={handleClick}
-      type="button"
-      className="btn btn-primary normal-case min-w-60"
-    >
+    <button onClick={handleClick} type="button" className="btn btn-primary normal-case min-w-60">
       Sign In With Google
     </button>
   );
