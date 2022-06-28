@@ -59,7 +59,7 @@ Let's dive into React and Vite can use with React.
 
 [TypeScript](https://github.com/microsoft/TypeScript) is a superset of JavaScript. It is just one of NPM library, but it provides an original compiler.
 
-When you use TypeScript with React, you can write JSX with TypeScript, called TSX. Then you can develop views written by  **Type-Safe** template.
+When you use TypeScript with React, you can write JSX with TypeScript, called TSX. Then you can develop views written by **Type-Safe** template.
 
 ## Tailwind CSS
 
@@ -111,3 +111,44 @@ Please read: https://prettier.io/docs/en/integrating-with-linters.html.
 ### Support me!
 
 <a href="https://www.buymeacoffee.com/meijin" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
+
+## Bit.dev Component Library
+
+npx @teambit/bvm install
+bit new react my-wiki --default-scope my-org.wiki
+bit start
+
+bit init
+bit install (recommended for workspace dependecy installation)
+bit start # to see the component rendered in isolation
+bit compile # to ensure compilation is successful
+bit test # run all tests in isolation
+bit check-types # validate type script types
+
+Bit inside a monorepo
+If your project is using any monorepo tool, ensure you still run bit init at the root directory of your project. Not in any of the sub-projects of the monorepo.
+It is recommended to use Bit to track components from any sub-project, keep a single .bitmap and workspace.jsonc files for managing configuration and workflow.
+
+Running dev services
+Dev services are component development procedures that are provided by envs. Even though different envs provide different implementations of these dev services, they all use the same standardized interfaces.
+
+For example, run the following command to compile your components' code:
+
+bit compile
+Copy
+The output lists all components affected by the compilation. Notice how the custom env and the component that uses it, were both compiled. That is so, even though each of them uses a different env.
+
+STATUS COMPONENT ID
+✔ SUCCESS envs/my-react
+✔ SUCCESS ui/button
+Copy
+To learn more about specific development services see the following:
+
+Compiler
+Tester
+Builder
+Linter
+Formatter
+Generator (component templates)
+Docs
+Compositions
