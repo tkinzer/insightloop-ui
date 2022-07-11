@@ -1,14 +1,20 @@
 import React from 'react';
 import styled from 'styled-components';
 import JournalEntries from './JournalEntries';
-import { JournalProvider } from './useJournalEntries';
+import useJournalEntries, { JournalProvider } from './useJournalEntries';
 import SearchBar from './../components/shared/search/SearchBar';
 import firestore from './../firebase';
+import { Navigate, useNavigate } from 'react-router-dom';
 
 export default function Journal() {
   const [journals, setJournals] = React.useState([]);
+  const navigate = useNavigate();
 
   // TODO get journal entries from firestore collection
+  const entries = useJournalEntries();
+  const addJournalEntry = () => {
+    navigate('journal/new');
+  };
 
   return (
     <main>
@@ -16,7 +22,7 @@ export default function Journal() {
       <JournalProvider journalEntries={[]}>
         <SearchBar />
         <JournalEntries />
-        <FloatingButton onClick={() => console.log(`Add Journal Entry`)} />
+        <FloatingButton onClick={addJournalEntry}>+</FloatingButton>
       </JournalProvider>
     </main>
   );
@@ -37,9 +43,14 @@ const JournalTitle = styled.h2`
 
 export const FloatingButton = styled.button`
   position: fixed;
+  display: flex;
+  justifycontent: center;
+  alignitems: center;
   bottom: 1rem;
   right: 1rem;
-  background-color: var(--color-primary);
+  height: 30px;
+  width: 30px;
+  background-color: silver;
   color: var(--color-white);
   border: none;
   border-radius: 50%;

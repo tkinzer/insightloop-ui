@@ -4,6 +4,7 @@ import { lazy, Suspense, useState } from 'react';
 import { Outlet, RouteObject, useRoutes, BrowserRouter } from 'react-router-dom';
 import Insights from '~/insights/Insights';
 import Journal from '~/journal/Journal';
+import { NewEntry } from '~/journal/NewEntry';
 import Stats from '~/stats/Stats';
 import Splash from '../screens/Splash';
 import TabBar from '../shared/navigation/TabBar';
@@ -73,6 +74,10 @@ const InnerRouter = () => {
         {
           index: true,
           element: <Journal />,
+        },
+        {
+          path: 'journal/new',
+          element: <NewEntry />,
         },
       ],
     },
