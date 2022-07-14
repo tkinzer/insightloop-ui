@@ -1,17 +1,16 @@
-import splashImage from '../../assets/images/insightloop-splash-white-simple.png';
-import { SignInButton } from '../domain/auth/SignInButton';
+import { useNavigate } from 'react-router-dom';
 
-export const Splash = () => {
+export default function Splash() {
   const splashClasses = `flex flex-col items-center justify-center h-screen`;
   return (
     <div className={splashClasses}>
-      <Example />
+      <LoginFormTemplate />
     </div>
   );
-};
-export default Splash;
+}
 
-function Example() {
+function LoginFormTemplate() {
+  const navigate = useNavigate();
   return (
     <div className="bg-white">
       <div className="max-w-7xl mx-auto text-center py-12 px-4 sm:px-6 lg:py-16 lg:px-8">
@@ -21,20 +20,20 @@ function Example() {
         </h2>
         <div className="mt-8 flex justify-center">
           <div className="inline-flex rounded-md shadow">
-            <a
-              href="#"
+            <button
+              onClick={(e) => navigate('welcome')}
               className="inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700"
             >
               Get started
-            </a>
+            </button>
           </div>
           <div className="ml-3 inline-flex">
-            <a
-              href="#"
+            <button
+              onClick={(e) => navigate('about')}
               className="inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-indigo-700 bg-indigo-100 hover:bg-indigo-200"
             >
               Learn more
-            </a>
+            </button>
           </div>
         </div>
       </div>

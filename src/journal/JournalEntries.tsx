@@ -3,23 +3,16 @@ import styled from 'styled-components';
 import useJournalEntries from './useJournalEntries';
 
 export default function JournalEntries() {
-  const journal = useJournalEntries();
-  const { journalEntries } = journal;
-
-  useEffect(() => {
-    if (journalEntries && journalEntries.length > 0) {
-      console.log(`Journal entries: ${journalEntries.length}`);
-    }
-  }, [journalEntries]);
+  const { entries } = useJournalEntries();
 
   // TODO - add loading state
 
   return (
     <section>
       <JournalContainer>
-        {journalEntries &&
-          journalEntries.length > 0 &&
-          journalEntries.map((entry, idx) => {
+        {entries &&
+          entries.length > 0 &&
+          entries.map((entry, idx) => {
             return (
               <JournalEntry key={`entry${idx}-${entry.id}`}>
                 {entry.title && (

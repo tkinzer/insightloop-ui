@@ -1,29 +1,19 @@
 import React from 'react';
 import styled from 'styled-components';
 import JournalEntries from './JournalEntries';
-import useJournalEntries, { JournalProvider } from './useJournalEntries';
+import useJournalEntries from './useJournalEntries';
 import SearchBar from './../components/shared/search/SearchBar';
-import firestore from './../firebase';
-import { Navigate, useNavigate } from 'react-router-dom';
 
-export default function Journal() {
-  const [journals, setJournals] = React.useState([]);
-  const navigate = useNavigate();
-
-  // TODO get journal entries from firestore collection
-  const entries = useJournalEntries();
-  const addJournalEntry = () => {
-    navigate('journal/new');
-  };
+export default function Journal(): JSX.Element {
+  const entryHook = useJournalEntries();
 
   return (
     <main>
       <JournalTitle>Daily Journal</JournalTitle>
-      <JournalProvider journalEntries={[]}>
-        <SearchBar />
-        <JournalEntries />
-        <FloatingButton onClick={addJournalEntry}>+</FloatingButton>
-      </JournalProvider>
+
+      <SearchBar />
+      <JournalEntries />
+      <FloatingButton onClick={entryHook.addEntry}>+</FloatingButton>
     </main>
   );
 }

@@ -3,16 +3,16 @@ import React from 'react';
 import styled from 'styled-components';
 import SearchBar from '~/components/shared/search/SearchBar';
 import { FloatingButton } from '~/journal/Journal';
+import useInsights from './useInsights';
 
 export default function Insights() {
+  const { entries } = useInsights();
   return (
     <main>
       <PageTitle>Insights</PageTitle>
-      <InsightsProvider>
-        <SearchBar />
-        <List items={[]} />
-        <FloatingButton onClick={() => console.log(`Add Insights Entry`)} />
-      </InsightsProvider>
+      <SearchBar />
+      <List items={[]} />
+      <FloatingButton onClick={() => console.log(`Add Insights Entry`)} />
     </main>
   );
 }

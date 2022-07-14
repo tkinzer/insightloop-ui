@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 
-function SignupForm() {
+function LoginFormEmail() {
   let navigate = useNavigate();
 
   function submitForm(e: { preventDefault: () => void }) {
@@ -18,13 +18,15 @@ function SignupForm() {
     <form onSubmit={handleSubmit}>
       <div>
         <label htmlFor="email">Email</label>
-        <input type="email" id="email" name="email" />
+        <input type="email" id="email" name="email" autoComplete="true" />
       </div>
       <div>
         <label htmlFor="password">Password</label>
-        <input type="password" id="password" name="password" />
+        <input type="password" id="password" name="password" autoComplete="on" />
       </div>
       <button type="submit">Sign up</button>
     </form>
   );
 }
+
+export default LoginFormEmail;

@@ -1,19 +1,16 @@
-import LoginForm from '../domain/LoginForm';
 import { Head } from '../shared/Head';
 
-function Index() {
+export default function AboutScreen() {
   return (
     <>
       <Head title="Insight Loop" />
       <div className="hero min-h-screen">
         <div className="text-center hero-content">
           <div className="mt-4 grid gap-2">
-            <LoginForm />
+            <h2>About</h2>
           </div>
         </div>
       </div>
     </>
   );
 }
-
-export default Index;

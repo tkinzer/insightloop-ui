@@ -3,6 +3,12 @@ import { Link } from 'react-router-dom';
 
 import Styles from './TabBar.module.css';
 
+/**
+ *
+ * Highlight current Link using aria-current="page"
+ *
+ * @returns
+ */
 export default function TabBar() {
   const tabClasses = [Styles['tab-bar'], 'relative z-0 rounded-lg shadow flex divide-x divide-gray-200'].join(' ');
 
@@ -12,7 +18,6 @@ export default function TabBar() {
         <Link
           to="/journal"
           className="text-gray-900 rounded-l-lg group relative min-w-0 flex-1 overflow-hidden bg-white py-4 px-4 text-sm font-medium text-center hover:bg-gray-50 focus:z-10"
-          aria-current="page"
         >
           <span>Journal</span>
           <span aria-hidden="false" className="bg-indigo-500 absolute inset-x-0 bottom-0 h-0.5">

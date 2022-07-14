@@ -1,18 +1,17 @@
 import React from 'react';
 import { HelmetProvider } from 'react-helmet-async';
 import { Router } from '~/components/router/Router';
-import { getAuth, signInWithPopup, GoogleAuthProvider, signInAnonymously } from 'firebase/auth';
-import { setupFirebase } from '../contexts/FirebaseContext';
+import { setupFirebase } from '../../lib/firebase';
+import { UserContext, UserProvider, useUserState } from '../context/UserContext';
 
-export const App = () => {
-  console.log('starting firebase');
+export default function App() {
   setupFirebase();
 
   return (
     <HelmetProvider>
-      <main>
+      <UserProvider>
         <Router />
-      </main>
+      </UserProvider>
     </HelmetProvider>
   );
-};
+}

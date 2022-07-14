@@ -1,12 +1,13 @@
-import React, { useContext } from 'react';
-import { Link } from 'react-router-dom';
 import styled from 'styled-components';
+import { useFirestore } from '~/lib/firebase';
 
 export default function Profile() {
+  const firestore = useFirestore();
+
   return (
     <div>
       <Title>Profile</Title>
-      <h2>{'User info'}</h2>
+      <h2>{firestore.app.name}</h2>
     </div>
   );
 }

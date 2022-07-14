@@ -1,11 +1,14 @@
 // import { Dialog } from '@headlessui/react';
 import React from 'react';
 import { lazy, Suspense, useState } from 'react';
-import { Outlet, RouteObject, useRoutes, BrowserRouter } from 'react-router-dom';
+import { RouteObject, useRoutes, BrowserRouter } from 'react-router-dom';
 import Insights from '~/insights/Insights';
 import Journal from '~/journal/Journal';
 import { NewEntry } from '~/journal/NewEntry';
 import Stats from '~/stats/Stats';
+import EmptyLayout from '../layout/EmptyLayout';
+import Layout from '../layout/Layout';
+import AboutScreen from '../screens/About';
 import Splash from '../screens/Splash';
 import TabBar from '../shared/navigation/TabBar';
 
@@ -17,15 +20,6 @@ const ProfileScreen = lazy(() => import('~/components/screens/Profile'));
 const JournalScreen = lazy(() => import('~/components/screens/Journal'));
 const InsightsScreen = lazy(() => import('~/components/screens/Insights'));
 const StatsScreen = lazy(() => import('~/components/screens/Stats'));
-
-function Layout() {
-  return (
-    <div>
-      <nav className="p-4 flex items-center justify-between"></nav>
-      <Outlet />
-    </div>
-  );
-}
 
 export const Router = () => {
   return (
@@ -39,31 +33,23 @@ const InnerRouter = () => {
   const routes: RouteObject[] = [
     {
       path: '/',
-      element: <Layout />,
+      element: <EmptyLayout />,
       children: [
         {
           index: true,
-          element: <IndexScreen />,
+          element: <Splash />,
         },
         {
           path: '*',
           element: <Page404Screen />,
         },
         {
-          path: '/journal',
-          element: <JournalScreen />,
+          path: 'welcome',
+          element: <IndexScreen />,
         },
         {
-          path: '/insights',
-          element: <InsightsScreen />,
-        },
-        {
-          path: '/stats',
-          element: <StatsScreen />,
-        },
-        {
-          path: '/profile',
-          element: <ProfileScreen />,
+          path: 'about',
+          element: <AboutScreen />,
         },
       ],
     },
@@ -87,6 +73,7 @@ const InnerRouter = () => {
       children: [
         {
           element: <Insights />,
+          index: true,
         },
       ],
     },
@@ -104,7 +91,7 @@ const InnerRouter = () => {
       element: <Layout />,
       children: [
         {
-          element: <p>Profile</p>,
+          element: <ProfileScreen />,
         },
       ],
     },

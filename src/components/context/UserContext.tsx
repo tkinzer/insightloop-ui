@@ -3,7 +3,7 @@ import { User } from 'firebase/auth';
 
 type UserActions = { type: 'SIGN_IN'; payload: { user: User } } | { type: 'SIGN_OUT' };
 
-type UserState =
+export type UserState =
   | {
       state: 'SIGNED_IN';
       currentUser: User;
