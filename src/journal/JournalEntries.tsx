@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
+import StackedList from '~/components/domain/StackedList';
 import useJournalEntries from './useJournalEntries';
 
 export default function JournalEntries() {
@@ -9,23 +10,7 @@ export default function JournalEntries() {
 
   return (
     <section>
-      <JournalContainer>
-        {entries &&
-          entries.length > 0 &&
-          entries.map((entry, idx) => {
-            return (
-              <JournalEntry key={`entry${idx}-${entry.id}`}>
-                {entry.title && (
-                  <JournalEntryTitle>
-                    <p>{entry.title}</p>
-                    <p>{entry.date}</p>
-                  </JournalEntryTitle>
-                )}
-                <JournalEntryBody>{entry.body}</JournalEntryBody>
-              </JournalEntry>
-            );
-          })}
-      </JournalContainer>
+      <JournalContainer>{entries && entries.length > 0 && <StackedList items={entries} />}</JournalContainer>
     </section>
   );
 }

@@ -1,3 +1,5 @@
+const colors = require('tailwindcss/colors');
+
 module.exports = {
   mode: 'jit',
   purge: {
@@ -17,9 +19,15 @@ module.exports = {
       160: '40rem',
       200: '50rem',
     },
+    extend: {
+      colors: {
+        'warm-gray': '#8a2be2',
+        teal: colors.teal,
+      },
+    },
   },
   variants: {},
-  plugins: [require('daisyui'), require('@tailwindcss/forms')],
+  plugins: [require('daisyui'), require('@tailwindcss/forms'), require('@tailwindcss/aspect-ratio')],
   daisyui: {
     themes: ['emerald'],
   },

@@ -1,16 +1,17 @@
 import { Outlet } from 'react-router-dom';
 import styled from 'styled-components';
+import { useUserState } from '../context/UserContext';
 import Footer from '../shared/Footer';
-import TabBar from '../shared/navigation/TabBar';
+import TabBar from '../shared/TabBar';
 
 export default function Layout() {
+  const user = useUserState();
   return (
     <div className="h-full">
       <MainContainer>
         <Outlet />
       </MainContainer>
-      <Footer />
-      <TabBar />
+      {user.state.state === 'SIGNED_IN' ? <TabBar /> : <Footer />}
     </div>
   );
 }
@@ -19,9 +20,8 @@ const MainContainer = styled.main`
   display: flex;
   flex-direction: column;
   flex: 1;
-  overflow-y: auto;
-  overflow-x: hidden;
   padding: 0;
   margin: 0;
-  height: 90vh;
+  min-height: 90vh;
+  height: 100%;
 `;

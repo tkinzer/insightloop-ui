@@ -5,14 +5,19 @@ function Index() {
   return (
     <>
       <Head title="Insight Loop" />
-      <div className="hero min-h-screen">
-        <div className="text-center hero-content">
-          <div className="mt-4 grid gap-2">
-            <LoginForm />
-          </div>
-        </div>
-      </div>
+      <CatGame />
     </>
+  );
+}
+
+function CatGame() {
+  return (
+    <div>
+      <div className="flex flex-col items-center justify-center h-screen">
+        <p className="text-center text-3xl font-bold">Cats</p>
+        <img className="w-10" src="https://placekitten.com/g/500/500" alt="Cats" />
+      </div>
+    </div>
   );
 }
 

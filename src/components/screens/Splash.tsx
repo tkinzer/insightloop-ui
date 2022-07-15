@@ -21,7 +21,7 @@ function LoginFormTemplate() {
         <div className="mt-8 flex justify-center">
           <div className="inline-flex rounded-md shadow">
             <button
-              onClick={(e) => navigate('/welcome')}
+              onClick={(e) => navigate('/auth')}
               className="inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700"
             >
               Get started

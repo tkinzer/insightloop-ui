@@ -1,9 +1,12 @@
 import { signInAnonymously } from 'firebase/auth';
 import React, { useRef, useState } from 'react';
+import Styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
 import useFirebase from '../context/FirebaseContext';
 
 function LoginForm(): JSX.Element {
   const { auth, initializeApp, loginUser } = useFirebase();
+  const navigate = useNavigate();
 
   const loginGuest = () => {
     if (!auth) {
@@ -19,34 +22,51 @@ function LoginForm(): JSX.Element {
         }
       })
       .catch((e) => console.error(e));
-
-    // TODO: signInAnonymously(auth);
   };
 
-  return <Form loginUser={loginUser} />;
+  return <Form />;
 }
 
-/*
-  This example requires Tailwind CSS v2.0+ 
-  
-  This example requires some changes to your config:
-  
-  ```
-  // tailwind.config.js
-  module.exports = {
-    // ...
-    plugins: [
-      // ...
-      require('@tailwindcss/forms'),
-    ],
+/**
+ *
+ * @param props
+ * @returns Login Form Element
+ */
+function Form(): JSX.Element {
+  const navigate = useNavigate();
+  const { loginUser, loginUserWithEmailAndPassword } = useFirebase();
+  const emailRef = useRef<HTMLInputElement>(null);
+  const passwordRef = useRef<HTMLInputElement>(null);
+  const [error, setError] = useState<string>('');
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const email = emailRef.current?.value;
+    const password = passwordRef.current?.value;
+
+    if (!email || !password) {
+      setError('Please enter an email and password');
+      return;
+    }
+
+    loginUserWithEmailAndPassword(email, password)
+      .then((response) => {
+        if (response) {
+          console.log('loginUserWithEmailAndPassword', response);
+        }
+      })
+      .catch((e) => console.error(e));
+  };
+
+  function loginWithGoogle(e: React.MouseEvent): void {
+    e.preventDefault();
+    const result = loginUser();
+    if (result) {
+      console.log('loginUser', result);
+      navigate('/profile');
+    }
   }
-  ```
-*/
-interface FormProps {
-  loginUser: (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => void;
-}
-function Form(props: FormProps): JSX.Element {
-  const { loginUser } = props;
+
   return (
     <>
       <div className="min-h-full flex">
@@ -59,12 +79,7 @@ function Form(props: FormProps): JSX.Element {
                 alt="Workflow"
               />
               <h2 className="mt-6 text-3xl font-extrabold text-gray-900">Welcome to InsightLoop</h2>
-              {/* <p className="mt-2 text-sm text-gray-600">
-                Or{' '}
-                <a href="#" className="font-medium text-indigo-600 hover:text-indigo-500">
-                  start your 14-day free trial
-                </a>
-              </p> */}
+              <p className="mt-2 text-sm text-indigo-600 hover:text-indigo-500">Growth. Change. Acceptance.</p>
             </div>
 
             <div className="mt-8">
@@ -74,20 +89,13 @@ function Form(props: FormProps): JSX.Element {
 
                   <div className="mt-1 grid grid-cols-3 gap-3">
                     <div>
-                      <a
+                      <GoogleLogin
                         href="#"
-                        onClick={loginUser}
+                        onClick={(e) => loginWithGoogle(e)}
                         className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
                       >
-                        <span className="sr-only">Sign in with Facebook</span>
-                        <svg className="w-5 h-5" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20">
-                          <path
-                            fillRule="evenodd"
-                            d="M20 10c0-5.523-4.477-10-10-10S0 4.477 0 10c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V10h2.54V7.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V10h2.773l-.443 2.89h-2.33v6.988C16.343 19.128 20 14.991 20 10z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
-                      </a>
+                        <span className="sr-only">Sign in with Google</span>
+                      </GoogleLogin>
                     </div>
                   </div>
                 </div>
@@ -103,7 +111,7 @@ function Form(props: FormProps): JSX.Element {
               </div>
 
               <div className="mt-6">
-                <form action="#" method="POST" className="space-y-6">
+                <form action="#" onSubmit={handleSubmit} method="POST" className="space-y-6">
                   <div>
                     <label htmlFor="email" className="block text-sm font-medium text-gray-700">
                       Email address
@@ -112,6 +120,7 @@ function Form(props: FormProps): JSX.Element {
                       <input
                         id="email"
                         name="email"
+                        ref={(emailRef) => emailRef && emailRef.focus()}
                         type="email"
                         autoComplete="email"
                         required
@@ -149,11 +158,11 @@ function Form(props: FormProps): JSX.Element {
                       </label>
                     </div>
 
-                    <div className="text-sm">
+                    {/* <div className="text-sm">
                       <a href="#" className="font-medium text-indigo-600 hover:text-indigo-500">
                         Forgot your password?
                       </a>
-                    </div>
+                    </div> */}
                   </div>
 
                   <div>
@@ -173,12 +182,48 @@ function Form(props: FormProps): JSX.Element {
           <img
             className="absolute inset-0 h-full w-full object-cover"
             src="https://images.unsplash.com/photo-1505904267569-f02eaeb45a4c?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1908&q=80"
-            alt=""
+            alt="Cool image"
           />
         </div>
       </div>
     </>
   );
 }
+
+// const mapDispatchToProps = (dispatch) => ({
+//   loginUserWithEmailAndPassword: (email, password) =>
+//     dispatch(loginUserWithEmailAndPassword(email, password)),
+// });
+
+const GoogleLogin = Styled.a`
+  background: url(https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png) no-repeat;
+  background-size: contain;
+  width: 100%;
+  height: 100%;
+  display: block;
+
+  &:hover {
+    background: url('/img/google-logo-hover.png') no-repeat;
+  }
+
+  &:active {
+    background: url('/img/google-logo-active.png') no-repeat;
+  }
+
+  &:focus {
+    outline: none;
+  }
+
+  &:focus:after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 5px;
+  }
+`;
 
 export default LoginForm;

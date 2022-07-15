@@ -7,9 +7,12 @@ import {
   getRedirectResult,
   signInWithPopup,
   signInWithRedirect,
+  signInWithEmailAndPassword,
+  UserCredential,
 } from 'firebase/auth';
 import { connectFirestoreEmulator, Firestore, getFirestore } from 'firebase/firestore';
 import React, { FC } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 let firebaseApp: FirebaseApp;
 const appName = import.meta.env.appName ?? 'insight-loop';
@@ -20,10 +23,11 @@ type FirebaseContextType = {
   auth: FirebaseAuth | null;
   firestore: Firestore | null;
   initializeApp: (options?: any) => void;
-  loginUser: (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => void;
+  loginUser: () => Promise<string | void | undefined>;
   loginWithGoogle: () => Promise<void>;
   logoutUser: () => Promise<void>;
   // getRedirectResult: () => Promise<any>;
+  loginUserWithEmailAndPassword: (email: string, password: string) => Promise<UserCredential>;
 };
 
 const defaultFirebaseContext: FirebaseContextType = {
@@ -35,6 +39,7 @@ const defaultFirebaseContext: FirebaseContextType = {
   logoutUser: () => Promise.resolve(),
   // getRedirectResult: () => Promise.resolve({}),
   loginWithGoogle: () => Promise.resolve(),
+  loginUserWithEmailAndPassword: () => Promise.resolve({} as UserCredential),
 };
 
 const FirebaseContext = React.createContext<FirebaseContextType>(defaultFirebaseContext);
@@ -75,6 +80,7 @@ export const FirebaseProvider: FC<FirebaseProps> = (props) => {
   const [firebaseApp, setApp] = React.useState<FirebaseApp | null>(firebaseContext.firebaseApp);
   const [firebaseAuth, setFirebaseAuth] = React.useState<FirebaseAuth | null>(firebaseContext.auth);
   const [firebaseFirestore, setFirebaseFirestore] = React.useState<Firestore | null>(firebaseContext.firestore);
+  const [providerToken, setProviderToken] = React.useState<string | null>(null);
   const provider = new GoogleAuthProvider();
 
   function init() {
@@ -83,10 +89,10 @@ export const FirebaseProvider: FC<FirebaseProps> = (props) => {
       return;
     }
 
-    const app = initializeApp(firebaseConfig, appName);
+    const tempApp = initializeApp(firebaseConfig, appName);
 
-    const tempAuth = getFirebaseAuth(app);
-    const tempFirestore = getFirestore(app);
+    const tempAuth = getFirebaseAuth(tempApp);
+    const tempFirestore = getFirestore(tempApp);
 
     if (!firebaseAuth) setFirebaseAuth(tempAuth);
     if (!firebaseFirestore) setFirebaseFirestore(tempFirestore);
@@ -96,8 +102,8 @@ export const FirebaseProvider: FC<FirebaseProps> = (props) => {
       connectAuthEmulator(tempAuth, 'http://localhost:9099');
     }
 
-    setApp(app);
-    console.log('FirebaseApp', app);
+    setApp(tempApp);
+    console.log('FirebaseApp', tempApp);
   }
 
   async function loginWithGoogle() {
@@ -108,27 +114,36 @@ export const FirebaseProvider: FC<FirebaseProps> = (props) => {
     getRedirectResult(firebaseAuth).then(function (result) {
       if (result) {
         // This gives you a Google Access Token.
-        console.log('getRedirectResult', result);
+        console.log('getRedirectResult from login -->', result);
       }
     });
 
     await signInWithRedirect(firebaseAuth, provider);
   }
 
-  function loginUser(e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) {
-    e.preventDefault();
+  /**
+   * Simple login with popup that will redirect to the login page.
+   * TODO: Pass the provider so that it can ne dynamic for multiple providers.
+   * @param e React.MouseEvent<HTMLAnchorElement, MouseEvent>
+   * @returns
+   */
+  function loginUser(): Promise<string | void | undefined> {
     if (!firebaseAuth) {
-      return;
+      return Promise.reject();
     }
 
-    console.log('login in user');
-    signInWithPopup(firebaseAuth, provider)
+    console.log('Redirecting to third-party login page');
+    const token = signInWithPopup(firebaseAuth, provider)
       .then((result) => {
         console.log('user login', result);
         // This gives you a Google Access Token. You can use it to access the Google API.
         const credential = GoogleAuthProvider.credentialFromResult(result);
         const token = credential?.accessToken;
-        console.log('signed in user:  ', token);
+        console.log('GoogleAuth access token:  ', token);
+        // TODO - save token to local storage
+        setProviderToken(token ?? '');
+
+        return token;
       })
       .catch((error) => {
         // Handle Errors here.
@@ -140,6 +155,8 @@ export const FirebaseProvider: FC<FirebaseProps> = (props) => {
         const credential = GoogleAuthProvider.credentialFromError(error);
         console.error(credential);
       });
+
+    return token ?? Promise.reject();
   }
 
   /**
@@ -153,6 +170,20 @@ export const FirebaseProvider: FC<FirebaseProps> = (props) => {
     return Promise.resolve();
   }
 
+  /**
+   * Login user with email and password
+   * @param email string
+   * @param password string
+   * @returns {Promise<void>}
+   */
+  function loginUserWithEmailAndPassword(email: string, password: string): Promise<UserCredential> {
+    if (!firebaseAuth) {
+      return Promise.reject('No firebase auth');
+    }
+
+    return signInWithEmailAndPassword(firebaseAuth, email, password);
+  }
+
   return (
     <FirebaseContext.Provider
       value={{
@@ -163,6 +194,7 @@ export const FirebaseProvider: FC<FirebaseProps> = (props) => {
         loginUser: loginUser,
         logoutUser: logoutUser,
         loginWithGoogle: loginWithGoogle,
+        loginUserWithEmailAndPassword: loginUserWithEmailAndPassword,
       }}
     >
       {children}
