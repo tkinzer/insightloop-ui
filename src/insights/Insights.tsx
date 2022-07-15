@@ -6,7 +6,7 @@ import { FloatingButton } from '~/journal/Journal';
 import useInsights from './useInsights';
 
 export default function Insights() {
-  const { entries } = useInsights();
+  // const { entries } = useInsights();
   return (
     <main>
       <PageTitle>Insights</PageTitle>

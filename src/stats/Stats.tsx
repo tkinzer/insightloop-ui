@@ -11,7 +11,7 @@ import styled from 'styled-components';
 export default function Stats() {
   return (
     <ImageContainer>
-      <img src={statsImage} alt="figma" />
+      <h1>Stats</h1>
     </ImageContainer>
   );
 }
