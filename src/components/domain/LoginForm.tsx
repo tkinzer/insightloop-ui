@@ -67,30 +67,6 @@ function Form(): JSX.Element {
     }
   }
 
-  return <Form loginUser={loginUser} />;
-}
-
-/*
-  This example requires Tailwind CSS v2.0+ 
-  
-  This example requires some changes to your config:
-  
-  ```
-  // tailwind.config.js
-  module.exports = {
-    // ...
-    plugins: [
-      // ...
-      require('@tailwindcss/forms'),
-    ],
-  }
-  ```
-*/
-interface FormProps {
-  loginUser: (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => void;
-}
-function Form(props: FormProps): JSX.Element {
-  const { loginUser } = props;
   return (
     <>
       <div className="min-h-full flex">
