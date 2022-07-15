@@ -1,16 +1,9 @@
-// import { Dialog } from '@headlessui/react';
-import React from 'react';
-import { lazy, Suspense, useState } from 'react';
+import { lazy, Suspense } from 'react';
 import { RouteObject, useRoutes, BrowserRouter } from 'react-router-dom';
-import Insights from '~/insights/Insights';
-import Journal from '~/journal/Journal';
 import { NewEntry } from '~/journal/NewEntry';
-import Stats from '~/stats/Stats';
-import EmptyLayout from '../layout/EmptyLayout';
 import Layout from '../layout/Layout';
 import AboutScreen from '../screens/About';
 import Splash from '../screens/Splash';
-import TabBar from '../shared/navigation/TabBar';
 
 const Loading = () => <p className="p-4 w-full h-full text-center">Loading...</p>;
 
@@ -33,7 +26,7 @@ const InnerRouter = () => {
   const routes: RouteObject[] = [
     {
       path: '/',
-      element: <EmptyLayout />,
+      element: <Layout />,
       children: [
         {
           index: true,
@@ -59,7 +52,7 @@ const InnerRouter = () => {
       children: [
         {
           index: true,
-          element: <Journal />,
+          element: <JournalScreen />,
         },
         {
           path: 'journal/new',
@@ -72,7 +65,7 @@ const InnerRouter = () => {
       element: <Layout />,
       children: [
         {
-          element: <Insights />,
+          element: <InsightsScreen />,
           index: true,
         },
       ],
@@ -82,7 +75,8 @@ const InnerRouter = () => {
       element: <Layout />,
       children: [
         {
-          element: <Stats />,
+          element: <StatsScreen />,
+          index: true,
         },
       ],
     },
@@ -92,6 +86,7 @@ const InnerRouter = () => {
       children: [
         {
           element: <ProfileScreen />,
+          index: true,
         },
       ],
     },

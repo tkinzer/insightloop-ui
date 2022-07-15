@@ -5,7 +5,7 @@ import Stats from '~/stats/Stats';
  * Routing page for the Stats entries
  * @returns {JSX.Element}
  */
-function StatsPage() {
+function StatsScreen() {
   const StatsPageClasses = `flex flex-col items-center justify-center h-screen`;
   return (
     <div className={StatsPageClasses}>
@@ -14,4 +14,4 @@ function StatsPage() {
   );
 }
 
-export default StatsPage;
+export default StatsScreen;

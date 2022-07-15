@@ -15,20 +15,21 @@
   },
   "emulators": {
     "hosting": {
-      "post": "5002"
+      "post": 5002
     },
     "firestore": {
-      "port": "8080"
+      "port": 8081
     },
     "ui": {
       "enabled": true,
       "port": 4000
     },
     "auth": {
-      "port": "9099"
+      "enabled": true,
+      "port": 4100
     },
     "pubsub": {
-      "port": "8085"
+      "port": 4200
     }
   }
 }

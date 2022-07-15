@@ -1,16 +1,15 @@
 import React from 'react';
 import Profile from '~/profile/Profile';
-import { UserState, useUserState } from '../context/UserContext';
-import { SignInButton } from '../domain/auth/SignInButton';
 
 /**
  * Routing page for the Profile
  * @returns {JSX.Element}
  */
 function ProfileScreen() {
-  const ProfilePageClasses = `flex flex-col items-center justify-center h-screen`;
+  const ProfilePageClasses = `flex flex-col items-center justify-center bg-emerald-400 min-h-16`;
   return (
     <div className={ProfilePageClasses}>
+      <h1>Profile</h1>
       <Profile />
     </div>
   );
