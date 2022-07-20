@@ -7,9 +7,13 @@ import Profile from '~/profile/Profile';
  */
 function ProfileScreen() {
   const ProfilePageClasses = `flex flex-col items-center justify-center bg-emerald-400 min-h-16`;
+
+  // TODO: Add a Profile component with a ProfileProvider
+  // TODO: use the user to get robohash img
   return (
     <div className={ProfilePageClasses}>
-      <h1>Profile</h1>
+      <h1>Anonymous</h1>
+      <img src="https://robohash.org/tim" alt="contact image" />
       <Profile />
     </div>
   );

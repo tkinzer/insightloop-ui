@@ -4,14 +4,14 @@ import { useUserState } from '../context/UserContext';
 import Footer from '../shared/Footer';
 import TabBar from '../shared/TabBar';
 
-export default function Layout() {
+export default function PublicLayout() {
   const user = useUserState();
   return (
     <div className="h-full">
       <MainContainer>
         <Outlet />
       </MainContainer>
-      <TabBar tabs={[]} />
+      {user.state.state === 'SIGNED_IN' ? <TabBar tabs={[]} /> : <Footer />}
     </div>
   );
 }

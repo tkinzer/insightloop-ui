@@ -5,6 +5,7 @@ import { RouteObject, useRoutes, BrowserRouter } from 'react-router-dom';
 // TODO: use Route Object to define nested routes from the top level parent route
 import { NewEntry } from '~/journal/NewEntry';
 import Layout from '../layout/Layout';
+import PublicLayout from '../layout/PublicLayout';
 
 const Loading = () => <p className="p-4 w-full h-full text-center">Loading...</p>;
 
@@ -23,6 +24,7 @@ const PressScreen = lazy(() => import('~/components/screens/Press'));
 const ContactScreen = lazy(() => import('~/components/screens/Contact'));
 const PartnersScreen = lazy(() => import('~/components/screens/Partners'));
 const SupportScreen = lazy(() => import('~/components/screens/Support'));
+const HomeScreen = lazy(() => import('~/components/screens/Home'));
 
 export const Router = () => {
   return (
@@ -36,7 +38,7 @@ const InnerRouter = () => {
   const routes: RouteObject[] = [
     {
       path: '/',
-      element: <Layout />,
+      element: <PublicLayout />,
       children: [
         {
           index: true,
@@ -58,7 +60,7 @@ const InnerRouter = () => {
     },
     {
       path: '/public',
-      element: <Layout />,
+      element: <PublicLayout />,
       children: [
         {
           path: 'welcome',
@@ -88,6 +90,16 @@ const InnerRouter = () => {
         {
           path: 'support',
           element: <SupportScreen />,
+        },
+      ],
+    },
+    {
+      path: '/home',
+      element: <Layout />,
+      children: [
+        {
+          index: true,
+          element: <HomeScreen />,
         },
       ],
     },

@@ -2,16 +2,18 @@ import { signInAnonymously } from 'firebase/auth';
 import React, { useRef, useState } from 'react';
 import Styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
-import useFirebase from '../context/FirebaseContext';
+import { useFirebaseContext } from '../context/FirebaseContext';
+import EmailAndPasswordLoginForm from './EmailAndPasswordLoginForm';
 
 function LoginForm(): JSX.Element {
-  const { auth, initializeApp, loginUser } = useFirebase();
   const navigate = useNavigate();
+  const { auth, loginWithGoogle } = useFirebaseContext();
 
-  const loginGuest = () => {
+  const loginGuest = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+
     if (!auth) {
-      console.error('auth is null');
-      initializeApp();
+      console.error('No auth');
       return;
     }
 
@@ -21,51 +23,11 @@ function LoginForm(): JSX.Element {
           console.log('signInAnonymously', response);
         }
       })
-      .catch((e) => console.error(e));
-  };
-
-  return <Form />;
-}
-
-/**
- *
- * @param props
- * @returns Login Form Element
- */
-function Form(): JSX.Element {
-  const navigate = useNavigate();
-  const { loginUser, loginUserWithEmailAndPassword } = useFirebase();
-  const emailRef = useRef<HTMLInputElement>(null);
-  const passwordRef = useRef<HTMLInputElement>(null);
-  const [error, setError] = useState<string>('');
-
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const email = emailRef.current?.value;
-    const password = passwordRef.current?.value;
-
-    if (!email || !password) {
-      setError('Please enter an email and password');
-      return;
-    }
-
-    loginUserWithEmailAndPassword(email, password)
-      .then((response) => {
-        if (response) {
-          console.log('loginUserWithEmailAndPassword', response);
-        }
+      .finally(() => {
+        navigate('/home');
       })
       .catch((e) => console.error(e));
   };
-
-  function loginWithGoogle(e: React.MouseEvent): void {
-    e.preventDefault();
-    const result = loginUser();
-    if (result) {
-      console.log('loginUser', result);
-      navigate('/profile');
-    }
-  }
 
   return (
     <>
@@ -87,15 +49,18 @@ function Form(): JSX.Element {
                 <div>
                   <p className="text-sm font-medium text-gray-700">Sign in with</p>
 
-                  <div className="mt-1 grid grid-cols-3 gap-3">
+                  <div className="mt-1 grid grid-cols-1 gap-3">
                     <div>
                       <GoogleLogin
                         href="#"
-                        onClick={(e) => loginWithGoogle(e)}
+                        onClick={(e) => loginWithGoogle()}
                         className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
                       >
                         <span className="sr-only">Sign in with Google</span>
                       </GoogleLogin>
+                    </div>
+                    <div>
+                      <GuestLogin onClick={(e) => loginGuest(e)}>Login as Guest</GuestLogin>
                     </div>
                   </div>
                 </div>
@@ -111,69 +76,7 @@ function Form(): JSX.Element {
               </div>
 
               <div className="mt-6">
-                <form action="#" onSubmit={handleSubmit} method="POST" className="space-y-6">
-                  <div>
-                    <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                      Email address
-                    </label>
-                    <div className="mt-1">
-                      <input
-                        id="email"
-                        name="email"
-                        ref={(emailRef) => emailRef && emailRef.focus()}
-                        type="email"
-                        autoComplete="email"
-                        required
-                        className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="space-y-1">
-                    <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                      Password
-                    </label>
-                    <div className="mt-1">
-                      <input
-                        id="password"
-                        name="password"
-                        type="password"
-                        autoComplete="current-password"
-                        required
-                        className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center">
-                      <input
-                        id="remember-me"
-                        name="remember-me"
-                        type="checkbox"
-                        className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
-                      />
-                      <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-900">
-                        Remember me
-                      </label>
-                    </div>
-
-                    {/* <div className="text-sm">
-                      <a href="#" className="font-medium text-indigo-600 hover:text-indigo-500">
-                        Forgot your password?
-                      </a>
-                    </div> */}
-                  </div>
-
-                  <div>
-                    <button
-                      type="submit"
-                      className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                    >
-                      Sign in
-                    </button>
-                  </div>
-                </form>
+                <EmailAndPasswordLoginForm />
               </div>
             </div>
           </div>
@@ -203,15 +106,7 @@ const GoogleLogin = Styled.a`
   display: block;
 
   &:hover {
-    background: url('/img/google-logo-hover.png') no-repeat;
-  }
-
-  &:active {
-    background: url('/img/google-logo-active.png') no-repeat;
-  }
-
-  &:focus {
-    outline: none;
+    border: 1px solid #ddd;
   }
 
   &:focus:after {
@@ -224,6 +119,19 @@ const GoogleLogin = Styled.a`
     background: rgba(255, 255, 255, 0.2);
     border-radius: 5px;
   }
+`;
+
+const GuestLogin = Styled.button`
+  background: colors.indigo;
+  background-size: contain;
+  
+  width: 100%;
+  height: 100%;
+  display: block;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
 `;
 
 export default LoginForm;

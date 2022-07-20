@@ -1,7 +1,9 @@
-import Support from '~/components/screens/Support';
-
 function SupportScreen() {
-  return <Support />;
+  return (
+    <div>
+      <img src="https://robohash.org/support" alt="contact image" />
+    </div>
+  );
 }
 
 /* This example requires Tailwind CSS v2.0+ */

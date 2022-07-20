@@ -1,4 +1,31 @@
 import { Tab } from '@headlessui/react';
+import { Link } from 'react-router-dom';
+import Insights from '../screens/Insights';
+import Journal from '../screens/Journal';
+
+type TabProps = {
+  to: string;
+  tabTitle: string;
+  children: React.ReactNode;
+};
+
+const defaultTabs: TabProps[] = [
+  {
+    to: '/home',
+    tabTitle: 'Home',
+    children: <Journal />,
+  },
+  {
+    to: '/journal',
+    tabTitle: 'Journal',
+    children: <Journal />,
+  },
+  {
+    to: '/insights',
+    tabTitle: 'Insights',
+    children: <Insights />,
+  },
+];
 
 /**
  *
@@ -6,29 +33,25 @@ import { Tab } from '@headlessui/react';
  *
  * @returns
  */
-function TabBar(props: any) {
-  return <MyTabs />;
-}
+function TabBar(props: { tabs: TabProps[] }) {
+  const { tabs } = props ?? { tabs: defaultTabs };
+  const appTabs = tabs ?? defaultTabs;
 
-type TabProps = {
-  to: string;
-  children: React.ReactNode;
-};
-
-function MyTabs() {
   return (
     <Tab.Group>
       <Tab.List>
-        <Tab>Journal</Tab>
-        <Tab>Insights</Tab>
-        <Tab>Stats</Tab>
-        <Tab>Profile</Tab>
+        {appTabs.map((tab) => (
+          <Tab key={tab.tabTitle}>
+            <Link to={tab.to}>{tab.tabTitle}</Link>
+          </Tab>
+        ))}
       </Tab.List>
       <Tab.Panels>
-        <Tab.Panel>Content 0</Tab.Panel>
-        <Tab.Panel>Content 1</Tab.Panel>
-        <Tab.Panel>Content 2</Tab.Panel>
-        <Tab.Panel>Content 3</Tab.Panel>
+        {appTabs.map((tab) => (
+          <Tab.Panel key={tab.tabTitle}>
+            <Link to={tab.to}>{tab.children}</Link>
+          </Tab.Panel>
+        ))}
       </Tab.Panels>
     </Tab.Group>
   );

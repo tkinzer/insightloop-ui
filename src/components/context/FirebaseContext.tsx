@@ -9,20 +9,20 @@ import {
   signInWithRedirect,
   signInWithEmailAndPassword,
   UserCredential,
+  onAuthStateChanged,
+  Auth,
+  AuthProvider,
+  User,
 } from 'firebase/auth';
-import { connectFirestoreEmulator, Firestore, getFirestore } from 'firebase/firestore';
-import React, { FC } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { collection, connectFirestoreEmulator, Firestore, getDocs, getFirestore } from 'firebase/firestore';
+import React, { FC, ReactNode } from 'react';
 
-let firebaseApp: FirebaseApp;
 const appName = import.meta.env.appName ?? 'insight-loop';
-const useEmulator = () => import.meta.env.VITE_USE_FIREBASE_EMULATOR;
 
 type FirebaseContextType = {
   firebaseApp: FirebaseApp | null;
   auth: FirebaseAuth | null;
   firestore: Firestore | null;
-  initializeApp: (options?: any) => void;
   loginUser: () => Promise<string | void | undefined>;
   loginWithGoogle: () => Promise<void>;
   logoutUser: () => Promise<void>;
@@ -34,7 +34,6 @@ const defaultFirebaseContext: FirebaseContextType = {
   firebaseApp: null,
   auth: null,
   firestore: null,
-  initializeApp: () => {},
   loginUser: () => Promise.resolve(),
   logoutUser: () => Promise.resolve(),
   // getRedirectResult: () => Promise.resolve({}),
@@ -44,12 +43,6 @@ const defaultFirebaseContext: FirebaseContextType = {
 
 const FirebaseContext = React.createContext<FirebaseContextType>(defaultFirebaseContext);
 export const useFirebaseContext = () => React.useContext(FirebaseContext);
-
-type FirebaseProps = {
-  appName?: string;
-  useEmulator?: boolean;
-  children: any;
-};
 
 const firebaseConfig = {
   apiKey: 'AIzaSyCP3txb00LQMcZm5iKQJEXMxTQ3kkINGLY',
@@ -73,41 +66,91 @@ const viteFirebaseConfig = {
   measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
 };
 
-export const FirebaseProvider: FC<FirebaseProps> = (props) => {
-  console.debug('FirebaseProvider', props, firebaseConfig);
+export const FirebaseProvider: FC<{ children: ReactNode }> = (props) => {
   const { children } = props;
+  const useEmulator = () => import.meta.env.VITE_USE_FIREBASE_EMULATOR;
   const firebaseContext = useFirebaseContext();
-  const [firebaseApp, setApp] = React.useState<FirebaseApp | null>(firebaseContext.firebaseApp);
+
+  const [firebaseApp, setFirebaseApp] = React.useState<FirebaseApp | null>(null);
   const [firebaseAuth, setFirebaseAuth] = React.useState<FirebaseAuth | null>(firebaseContext.auth);
   const [firebaseFirestore, setFirebaseFirestore] = React.useState<Firestore | null>(firebaseContext.firestore);
   const [providerToken, setProviderToken] = React.useState<string | null>(null);
-  const provider = new GoogleAuthProvider();
+  const [user, setUser] = React.useState<User | null>(null);
+  const [isLoggedIn, setIsLoggedIn] = React.useState<boolean>(false);
+  const [provider, setProvider] = React.useState<AuthProvider | null>(null);
+  const [providerUserId, setProviderUserId] = React.useState<string | null>(null);
+  const [providerUserName, setProviderUserName] = React.useState<string | null>(null);
+  const [providerUserEmail, setProviderUserEmail] = React.useState<string | null>(null);
+  const useFirebaseEmulator = useEmulator();
+  const useFirebaseEmulatorConfig = useFirebaseEmulator ? viteFirebaseConfig : firebaseConfig;
+  const useFirebaseConfig = useFirebaseEmulator ? useFirebaseEmulatorConfig : firebaseConfig;
+  const useFirebaseApp = useFirebaseEmulator ? useFirebaseEmulator : firebaseApp;
 
-  function init() {
-    console.debug('Starting Firebase *******');
-    if (firebaseApp) {
+  function start(options?: any) {
+    if (useFirebaseApp) {
       return;
     }
+    const app = initializeApp(useFirebaseConfig);
+    setFirebaseApp(app);
 
-    const tempApp = initializeApp(firebaseConfig, appName);
+    const db = getFirestore(app);
+    setFirebaseFirestore(db);
+    // (async () => {
+    //   const querySnapshot = await getDocs(collection(db, 'users'));
+    //   querySnapshot.forEach((doc) => {
+    //     console.log(`${doc.id} => ${doc.data()}`);
+    //   });
+    // })();
 
-    const tempAuth = getFirebaseAuth(tempApp);
-    const tempFirestore = getFirestore(tempApp);
+    const auth = getFirebaseAuth(app);
+    setFirebaseAuth(auth);
 
-    if (!firebaseAuth) setFirebaseAuth(tempAuth);
-    if (!firebaseFirestore) setFirebaseFirestore(tempFirestore);
+    const provider = new GoogleAuthProvider();
+    provider.setCustomParameters({
+      prompt: 'select_account',
+    });
 
-    if (useEmulator()) {
-      connectFirestoreEmulator(tempFirestore, 'localhost', 8080);
-      connectAuthEmulator(tempAuth, 'http://localhost:9099');
-    }
+    // const authEmulator = connectAuthEmulator(auth, 'http://127.0.0.1:9099', { disableWarnings: true });
+    onAuthStateChanged(auth, async (user) => {
+      console.log('auth state changed', user);
+      if (user) {
+        const idToken = await user.getIdToken();
+        setProviderToken(idToken);
+        setProviderUserId(user.uid);
+        setProviderUserName(user.displayName);
+        setProviderUserEmail(user.email);
+      } else {
+        setProviderToken(null);
+        setProviderUserId(null);
+        setProviderUserName(null);
+        setProviderUserEmail(null);
+      }
 
-    setApp(tempApp);
-    console.log('FirebaseApp', tempApp);
+      // TODO clean up after
+    });
   }
 
+  React.useEffect(() => {
+    if (useFirebaseApp) {
+      return;
+    }
+    start();
+  }, [useFirebaseApp]);
+
+  const loginUser = async () => {
+    if (useFirebaseApp) {
+      return;
+    }
+    const auth = getFirebaseAuth();
+    setFirebaseAuth(auth);
+  };
+
+  /**
+   * Login with Redirect
+   * @returns {Promise<void>}
+   */
   async function loginWithGoogle() {
-    if (!firebaseAuth) {
+    if (!firebaseAuth || !provider) {
       return;
     }
 
@@ -127,8 +170,8 @@ export const FirebaseProvider: FC<FirebaseProps> = (props) => {
    * @param e React.MouseEvent<HTMLAnchorElement, MouseEvent>
    * @returns
    */
-  function loginUser(): Promise<string | void | undefined> {
-    if (!firebaseAuth) {
+  function loginUserWithPopup(): Promise<string | void | undefined> {
+    if (!firebaseAuth || !provider) {
       return Promise.reject();
     }
 
@@ -165,6 +208,7 @@ export const FirebaseProvider: FC<FirebaseProps> = (props) => {
    */
   function logoutUser() {
     if (!firebaseAuth) {
+      return Promise.reject();
     }
 
     return Promise.resolve();
@@ -190,8 +234,7 @@ export const FirebaseProvider: FC<FirebaseProps> = (props) => {
         firebaseApp: firebaseApp,
         auth: firebaseAuth,
         firestore: firebaseFirestore,
-        initializeApp: init,
-        loginUser: loginUser,
+        loginUser: loginUserWithPopup,
         logoutUser: logoutUser,
         loginWithGoogle: loginWithGoogle,
         loginUserWithEmailAndPassword: loginUserWithEmailAndPassword,
@@ -201,23 +244,3 @@ export const FirebaseProvider: FC<FirebaseProps> = (props) => {
     </FirebaseContext.Provider>
   );
 };
-
-export default function useFirebase() {
-  const firebaseContext = useFirebaseContext();
-
-  React.useEffect(() => {
-    firebaseContext.initializeApp();
-  }, []);
-
-  return firebaseContext;
-}
-
-export function useFirestore() {
-  const firebaseContext = useFirebaseContext();
-
-  React.useEffect(() => {
-    console.log('useFirestore', firebaseContext.firestore);
-  }, [firebaseContext.firestore]);
-
-  return firebaseContext.firestore;
-}

@@ -5,7 +5,12 @@ function ContactScreen() {
 }
 
 function Contact() {
-  return <div>Contact</div>;
+  return (
+    <div>
+      <img src="https://robohash.org/tim" alt="contact image" />
+      Contact
+    </div>
+  );
 }
 
 /* This example requires Tailwind CSS v2.0+ */

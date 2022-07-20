@@ -1,10 +1,4 @@
-# ⚡ vite-react-ts-tailwind-starter
-
-Starter using Vite + React + TypeScript + Tailwind with Firebase.
-
-## Motivation
-
-Improve building your faster **prototyping** by using Vite, TypeScript, React, TailwindCSS, Firebase.
+# InsightLoop
 
 This starter uses following libraries:
 
@@ -17,49 +11,6 @@ This starter uses following libraries:
 - Firebase(v9, modular)
 - ESLint
 - Prettier
-
-## Set up
-
-```shell
-mv .env.local.example .env.local
-yarn
-yarn dev
-```
-
-### Firebase
-
-If you **DO NOT** use Firebase, you should do:
-
-- Delete the Firebase-related code: you check Main.tsx, SignInButton.tsx, SignOutButton.tsx.
-- And then delete `src/lib/firebase.ts`
-- Run `yarn remove firebase`
-- Remove `VITE_FIREBASE_*` env values from `.env.local`
-
-If you want to use Firebase, you should do:
-
-- copy Firebase env values from Firebase Console, and paste them to `.env.local`.
-- enable Google Auth in Firebase Console. ref: https://firebase.google.com/docs/auth/web/google-signin#before_you_begin
-
-## Vite
-
-[Vite](https://github.com/vitejs/vite) is a fast frontend build tool. According to the [README](https://github.com/vitejs/vite/blob/main/README.md), it consists of two major parts:
-
-- A dev server that serves your source files over native ES modules, with rich built-in features and astonishingly fast Hot Module Replacement (HMR).
-- A build command that bundles your code with Rollup, pre-configured to output highly optimized static assets for production.
-
-## React
-
-[React](https://github.com/facebook/react) is a JavaScript library for building user interfaces.
-
-Due to its awesome renderer system, there are many [React Renderor](https://github.com/chentsulin/awesome-react-renderer). So React can be not used only Web, for example, used by [React Native](https://reactnative.dev/).
-
-Let's dive into React and Vite can use with React.
-
-## TypeScript
-
-[TypeScript](https://github.com/microsoft/TypeScript) is a superset of JavaScript. It is just one of NPM library, but it provides an original compiler.
-
-When you use TypeScript with React, you can write JSX with TypeScript, called TSX. Then you can develop views written by **Type-Safe** template.
 
 ## Tailwind CSS
 
