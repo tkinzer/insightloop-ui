@@ -11,7 +11,7 @@ import styled from 'styled-components';
 export default function Stats() {
   return (
     <ImageContainer>
-      <h1>Stats</h1>
+      <img src={statsImage} alt="stats" className="w-full h-full" />
     </ImageContainer>
   );
 }

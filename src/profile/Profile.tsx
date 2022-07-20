@@ -1,8 +1,6 @@
-import { Firestore } from 'firebase/firestore';
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import useFirebase from '~/components/context/FirebaseContext';
+import { useFirebaseContext } from '~/components/context/FirebaseContext';
 import { useUserState } from '~/components/context/UserContext';
 
 interface ProfileProps {
@@ -20,41 +18,30 @@ const defaultProfileProps = {
 };
 
 function Profile() {
-  const { firestore } = useFirebase();
-  // const user = firestore.doc('users/user1');
+  const { firestore, user } = useFirebaseContext();
   const navigate = useNavigate();
-
-  const userContext = useUserState();
-  const user = userContext.state.state === 'SIGNED_IN' ? userContext.state.currentUser.displayName : 'Guest';
-
-  if (user?.toLowerCase() === 'guest') {
-    navigate('/auth');
-  }
+  const userName = user?.isAnonymous ? 'Anonymous' : user?.displayName;
 
   return (
     <div className="flex flex-col gap-10 bg-emerald-400 min-h-16 h-full w-full">
-      <Title>Profile</Title>
-      <p>{user}</p>
-      <ProfileContainer />
+      <ProfileHeader userName={userName ?? ''} />
+      <p>{userName}</p>
+      <ProfileBody />
     </div>
   );
 }
 
-function ProfileContainer() {
-  return (
-    <>
-      <ProfileHeader />
-      <ProfileBody />
-    </>
-  );
-}
+function ProfileHeader(props: { userName: string; userPhotoUrl?: string; children?: React.ReactNode }): JSX.Element {
+  const { userName, userPhotoUrl, children } = props;
+  const roboHashUrl = 'https://robohash.org/' + userName;
 
-function ProfileHeader() {
   return (
     <div className="flex flex-col items-center justify-center">
+      <img src={userPhotoUrl ?? roboHashUrl} alt="profile" className="w-full h-full" />
       <span className="inline-flex items-center justify-center h-6 w-6 rounded-full bg-gray-500">
-        <span className="text-xs font-medium leading-none text-white">TK</span>
+        <span className="text-xs font-medium leading-none text-white">{userName}</span>
       </span>
+      {children}
     </div>
   );
 }
@@ -81,7 +68,10 @@ function FlatCards() {
         {items.map((item) => (
           <li key={item.id} className="px-6 py-4">
             {/* Your content */}
-            {item.title}
+            <Link to={item.to}>
+              <Icon title={item.icon} />
+              {item.title}
+            </Link>
           </li>
         ))}
       </ul>
@@ -97,5 +87,21 @@ const Title = styled.h1`
   padding: 0;
   height: 80;
 `;
+
+/**
+ * Global Icon component
+ * Generates an icon based on the title using the set of existing icons
+ * TODO: Add a way to set the icon size
+ * TODO: Move this to a separate file
+ * @param props {title: string}
+ * @returns
+ */
+function Icon(props: { title: string }) {
+  return (
+    <span className="inline-flex items-center justify-center h-6 w-6 rounded-full bg-gray-500">
+      <span className="text-xs font-medium leading-none text-white">{props.title}</span>
+    </span>
+  );
+}
 
 export default Profile;
