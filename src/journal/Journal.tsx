@@ -1,23 +1,29 @@
 import React from 'react';
 import styled from 'styled-components';
 import JournalEntries from './JournalEntries';
-import { JournalProvider } from './useJournalEntries';
+import useJournalEntries from './useJournalEntries';
 import SearchBar from './../components/shared/search/SearchBar';
-import firestore from './../firebase';
+import { PlusIcon } from '@heroicons/react/outline';
+import { useNavigate } from 'react-router-dom';
 
-export default function Journal() {
-  const [journals, setJournals] = React.useState([]);
+export default function Journal(): JSX.Element {
+  const { entries } = useJournalEntries();
+  const navigate = useNavigate();
 
-  // TODO get journal entries from firestore collection
+  const goToCreateJournal = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    navigate('/journal/new');
+  };
 
   return (
     <main>
       <JournalTitle>Daily Journal</JournalTitle>
-      <JournalProvider journalEntries={[]}>
-        <SearchBar />
-        <JournalEntries />
-        <FloatingButton onClick={() => console.log(`Add Journal Entry`)} />
-      </JournalProvider>
+
+      <SearchBar />
+      <JournalEntries entries={entries} />
+      <FloatingButton onClick={(e) => goToCreateJournal}>
+        <PlusIcon />
+      </FloatingButton>
     </main>
   );
 }
@@ -37,9 +43,14 @@ const JournalTitle = styled.h2`
 
 export const FloatingButton = styled.button`
   position: fixed;
+  display: flex;
+  justifycontent: center;
+  alignitems: center;
   bottom: 1rem;
   right: 1rem;
-  background-color: var(--color-primary);
+  height: 30px;
+  width: 30px;
+  background-color: silver;
   color: var(--color-white);
   border: none;
   border-radius: 50%;

@@ -1,38 +1,20 @@
-import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import useJournalEntries from './useJournalEntries';
+import StackedList from '~/components/domain/StackedList';
 
-export default function JournalEntries() {
-  const journal = useJournalEntries();
-  const { journalEntries } = journal;
+export default function JournalEntries(props: { entries: any[] }) {
+  const { entries } = props;
 
-  useEffect(() => {
-    if (journalEntries && journalEntries.length > 0) {
-      console.log(`Journal entries: ${journalEntries.length}`);
-    }
-  }, [journalEntries]);
+  if (!entries) {
+    return <div>Loading...</div>;
+  }
 
-  // TODO - add loading state
+  if (entries.length === 0) {
+    return <div>No entries found</div>;
+  }
 
   return (
     <section>
-      <JournalContainer>
-        {journalEntries &&
-          journalEntries.length > 0 &&
-          journalEntries.map((entry, idx) => {
-            return (
-              <JournalEntry key={`entry${idx}-${entry.id}`}>
-                {entry.title && (
-                  <JournalEntryTitle>
-                    <p>{entry.title}</p>
-                    <p>{entry.date}</p>
-                  </JournalEntryTitle>
-                )}
-                <JournalEntryBody>{entry.body}</JournalEntryBody>
-              </JournalEntry>
-            );
-          })}
-      </JournalContainer>
+      <JournalContainer>{entries && entries.length > 0 && <StackedList items={entries} />}</JournalContainer>
     </section>
   );
 }

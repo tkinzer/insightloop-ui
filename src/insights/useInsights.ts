@@ -1,26 +1,27 @@
 import React from 'react';
 
-interface InsightsContextProps {
-  insights: {
-    [insightId: string]: any;
-  };
-  setInsights: (insights: { [insightId: string]: any }) => void;
-}
-
-const defaultInsightsContext: InsightsContextProps = {
-  insights: {},
-  setInsights: () => {},
-};
-
-const InsightsContext = React.createContext(defaultInsightsContext);
+const InsightContext = React.createContext({
+  insights: [],
+});
 
 /**
  * Data hook for insights.
  */
-export function useInsights() {
-  const context = React.useContext(InsightsContext);
+export default function useInsights() {
+  const context = React.useContext(InsightContext);
   if (context === undefined) {
     throw new Error('useInsights must be used within an InsightsProvider');
   }
-  return context;
+
+  function addEntry() {
+    // TODO
+  }
+
+  function createEntry() {}
+
+  return {
+    entries: context.insights,
+    addEntry,
+    createEntry,
+  };
 }
