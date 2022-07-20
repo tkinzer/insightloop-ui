@@ -1,12 +1,16 @@
-import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import StackedList from '~/components/domain/StackedList';
-import useJournalEntries from './useJournalEntries';
 
-export default function JournalEntries() {
-  const { entries } = useJournalEntries();
+export default function JournalEntries(props: { entries: any[] }) {
+  const { entries } = props;
 
-  // TODO - add loading state
+  if (!entries) {
+    return <div>Loading...</div>;
+  }
+
+  if (entries.length === 0) {
+    return <div>No entries found</div>;
+  }
 
   return (
     <section>

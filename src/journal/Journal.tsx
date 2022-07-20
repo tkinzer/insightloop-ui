@@ -3,17 +3,27 @@ import styled from 'styled-components';
 import JournalEntries from './JournalEntries';
 import useJournalEntries from './useJournalEntries';
 import SearchBar from './../components/shared/search/SearchBar';
+import { PlusIcon } from '@heroicons/react/outline';
+import { useNavigate } from 'react-router-dom';
 
 export default function Journal(): JSX.Element {
-  const entryHook = useJournalEntries();
+  const { entries } = useJournalEntries();
+  const navigate = useNavigate();
+
+  const goToCreateJournal = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    navigate('/journal/new');
+  };
 
   return (
     <main>
       <JournalTitle>Daily Journal</JournalTitle>
 
       <SearchBar />
-      <JournalEntries />
-      <FloatingButton onClick={entryHook.addEntry}>+</FloatingButton>
+      <JournalEntries entries={entries} />
+      <FloatingButton onClick={(e) => goToCreateJournal}>
+        <PlusIcon />
+      </FloatingButton>
     </main>
   );
 }

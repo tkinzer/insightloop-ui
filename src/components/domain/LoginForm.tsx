@@ -4,13 +4,22 @@ import Styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { useFirebaseContext } from '../context/FirebaseContext';
 import EmailAndPasswordLoginForm from './EmailAndPasswordLoginForm';
+import splashImage from '../../assets/images/insightloop-splash-white-simple.png';
 
 function LoginForm(): JSX.Element {
   const navigate = useNavigate();
-  const { auth, loginWithGoogle } = useFirebaseContext();
+  const { auth, loginWithGoogle, user } = useFirebaseContext();
+
+  React.useEffect(() => {
+    if (user) {
+      console.log('user', user);
+      navigate('/journal');
+    }
+  }, [user]);
 
   const loginGuest = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
+    console.log('loginGuest');
 
     if (!auth) {
       console.error('No auth');
@@ -35,32 +44,31 @@ function LoginForm(): JSX.Element {
         <div className="flex-1 flex flex-col justify-center py-12 px-4 sm:px-6 lg:flex-none lg:px-20 xl:px-24">
           <div className="mx-auto w-full max-w-sm lg:w-96">
             <div>
-              <img
-                className="h-12 w-auto"
-                src="https://tailwindui.com/img/logos/workflow-mark-indigo-600.svg"
-                alt="Workflow"
-              />
-              <h2 className="mt-6 text-3xl font-extrabold text-gray-900">Welcome to InsightLoop</h2>
-              <p className="mt-2 text-sm text-indigo-600 hover:text-indigo-500">Growth. Change. Acceptance.</p>
+              <img className="flex w-1/2 justify-center" src={splashImage} alt="Workflow" />
             </div>
-
+            <div className="mt-6 text-center">
+              <p className="text-sm font-medium text-gray-700">Sign in with</p>
+            </div>
             <div className="mt-8">
               <div>
                 <div>
-                  <p className="text-sm font-medium text-gray-700">Sign in with</p>
-
                   <div className="mt-1 grid grid-cols-1 gap-3">
                     <div>
                       <GoogleLogin
-                        href="#"
                         onClick={(e) => loginWithGoogle()}
-                        className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
+                        className="w-full flex justify-center py-2 px-4 border-transparent border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
                       >
-                        <span className="sr-only">Sign in with Google</span>
+                        {/* <span className="sr-only">Sign in with Google</span> */}
+                        Sign in with Google
                       </GoogleLogin>
                     </div>
                     <div>
-                      <GuestLogin onClick={(e) => loginGuest(e)}>Login as Guest</GuestLogin>
+                      <GuestLogin
+                        className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                        onClick={(e) => loginGuest(e)}
+                      >
+                        Login as Guest
+                      </GuestLogin>
                     </div>
                   </div>
                 </div>
@@ -98,27 +106,9 @@ function LoginForm(): JSX.Element {
 //     dispatch(loginUserWithEmailAndPassword(email, password)),
 // });
 
-const GoogleLogin = Styled.a`
+const GoogleLogin = Styled.button`
   background: url(https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png) no-repeat;
   background-size: contain;
-  width: 100%;
-  height: 100%;
-  display: block;
-
-  &:hover {
-    border: 1px solid #ddd;
-  }
-
-  &:focus:after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(255, 255, 255, 0.2);
-    border-radius: 5px;
-  }
 `;
 
 const GuestLogin = Styled.button`

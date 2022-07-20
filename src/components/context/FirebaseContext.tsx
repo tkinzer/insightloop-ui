@@ -16,11 +16,13 @@ import {
 } from 'firebase/auth';
 import { collection, connectFirestoreEmulator, Firestore, getDocs, getFirestore } from 'firebase/firestore';
 import React, { FC, ReactNode } from 'react';
+import { Navigate } from 'react-router-dom';
 
 const appName = import.meta.env.appName ?? 'insight-loop';
 
 type FirebaseContextType = {
-  firebaseApp: FirebaseApp | null;
+  app: FirebaseApp | null;
+  user: User | null;
   auth: FirebaseAuth | null;
   firestore: Firestore | null;
   loginUser: () => Promise<string | void | undefined>;
@@ -31,7 +33,8 @@ type FirebaseContextType = {
 };
 
 const defaultFirebaseContext: FirebaseContextType = {
-  firebaseApp: null,
+  app: null,
+  user: null,
   auth: null,
   firestore: null,
   loginUser: () => Promise.resolve(),
@@ -76,31 +79,22 @@ export const FirebaseProvider: FC<{ children: ReactNode }> = (props) => {
   const [firebaseFirestore, setFirebaseFirestore] = React.useState<Firestore | null>(firebaseContext.firestore);
   const [providerToken, setProviderToken] = React.useState<string | null>(null);
   const [user, setUser] = React.useState<User | null>(null);
-  const [isLoggedIn, setIsLoggedIn] = React.useState<boolean>(false);
   const [provider, setProvider] = React.useState<AuthProvider | null>(null);
-  const [providerUserId, setProviderUserId] = React.useState<string | null>(null);
-  const [providerUserName, setProviderUserName] = React.useState<string | null>(null);
-  const [providerUserEmail, setProviderUserEmail] = React.useState<string | null>(null);
-  const useFirebaseEmulator = useEmulator();
-  const useFirebaseEmulatorConfig = useFirebaseEmulator ? viteFirebaseConfig : firebaseConfig;
-  const useFirebaseConfig = useFirebaseEmulator ? useFirebaseEmulatorConfig : firebaseConfig;
-  const useFirebaseApp = useFirebaseEmulator ? useFirebaseEmulator : firebaseApp;
+  // TODO: configure localhost emulators
+  // eg. handle const useFirebaseEmulator = useEmulator();
+  // FIX: const useFirebaseEmulatorConfig = useFirebaseEmulator ? viteFirebaseConfig : firebaseConfig;
+  // const useFirebaseConfig = useFirebaseEmulator ? useFirebaseEmulatorConfig : firebaseConfig;
+  // const useFirebaseApp = useFirebaseEmulator ? useFirebaseEmulator : firebaseApp;
 
   function start(options?: any) {
-    if (useFirebaseApp) {
+    if (firebaseApp) {
       return;
     }
-    const app = initializeApp(useFirebaseConfig);
+    const app = initializeApp(firebaseConfig);
     setFirebaseApp(app);
 
     const db = getFirestore(app);
     setFirebaseFirestore(db);
-    // (async () => {
-    //   const querySnapshot = await getDocs(collection(db, 'users'));
-    //   querySnapshot.forEach((doc) => {
-    //     console.log(`${doc.id} => ${doc.data()}`);
-    //   });
-    // })();
 
     const auth = getFirebaseAuth(app);
     setFirebaseAuth(auth);
@@ -109,40 +103,38 @@ export const FirebaseProvider: FC<{ children: ReactNode }> = (props) => {
     provider.setCustomParameters({
       prompt: 'select_account',
     });
+    setProvider(provider);
+  }
 
+  React.useEffect(() => {
+    if (firebaseApp) {
+      return;
+    }
+    start();
+  }, [firebaseApp]);
+
+  React.useEffect(() => {
+    if (!firebaseApp || !firebaseAuth) {
+      console.error('Firebase app or auth is not initialized');
+      return;
+    }
     // const authEmulator = connectAuthEmulator(auth, 'http://127.0.0.1:9099', { disableWarnings: true });
-    onAuthStateChanged(auth, async (user) => {
+    onAuthStateChanged(firebaseAuth, async (user) => {
       console.log('auth state changed', user);
       if (user) {
         const idToken = await user.getIdToken();
         setProviderToken(idToken);
-        setProviderUserId(user.uid);
-        setProviderUserName(user.displayName);
-        setProviderUserEmail(user.email);
+        setUser(user);
       } else {
         setProviderToken(null);
-        setProviderUserId(null);
-        setProviderUserName(null);
-        setProviderUserEmail(null);
       }
-
-      // TODO clean up after
     });
-  }
-
-  React.useEffect(() => {
-    if (useFirebaseApp) {
-      return;
-    }
-    start();
-  }, [useFirebaseApp]);
+  }, [firebaseAuth, firebaseApp]);
 
   const loginUser = async () => {
-    if (useFirebaseApp) {
+    if (!firebaseApp) {
       return;
     }
-    const auth = getFirebaseAuth();
-    setFirebaseAuth(auth);
   };
 
   /**
@@ -150,18 +142,25 @@ export const FirebaseProvider: FC<{ children: ReactNode }> = (props) => {
    * @returns {Promise<void>}
    */
   async function loginWithGoogle() {
+    console.log('loginWithGoogle');
     if (!firebaseAuth || !provider) {
+      console.error('firebaseAuth or provider is null');
       return;
     }
 
-    getRedirectResult(firebaseAuth).then(function (result) {
-      if (result) {
+    const result = await getRedirectResult(firebaseAuth).then((result) => {
+      console.log('getRedirectResult from login -->', result);
+      if (result?.user) {
+        result.user.getIdToken().then((idToken) => {
+          console.log('idToken from login -->', idToken);
+          setProviderToken(idToken);
+        });
         // This gives you a Google Access Token.
-        console.log('getRedirectResult from login -->', result);
       }
     });
 
-    await signInWithRedirect(firebaseAuth, provider);
+    // TBD do we need to await this?
+    signInWithRedirect(firebaseAuth, provider);
   }
 
   /**
@@ -231,7 +230,8 @@ export const FirebaseProvider: FC<{ children: ReactNode }> = (props) => {
   return (
     <FirebaseContext.Provider
       value={{
-        firebaseApp: firebaseApp,
+        app: firebaseApp,
+        user: user,
         auth: firebaseAuth,
         firestore: firebaseFirestore,
         loginUser: loginUserWithPopup,

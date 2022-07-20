@@ -1,7 +1,6 @@
 import { Outlet } from 'react-router-dom';
 import styled from 'styled-components';
 import { useUserState } from '../context/UserContext';
-import Footer from '../shared/Footer';
 import TabBar from '../shared/TabBar';
 
 export default function Layout() {
@@ -11,7 +10,7 @@ export default function Layout() {
       <MainContainer>
         <Outlet />
       </MainContainer>
-      <TabBar tabs={[]} />
+      <TabBar />
     </div>
   );
 }

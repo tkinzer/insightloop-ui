@@ -1,7 +1,7 @@
 import LoginForm from '../domain/LoginForm';
 import { Head } from '../shared/Head';
 
-function Auth() {
+function AuthScreen() {
   return (
     <>
       <Head title="Login" />
@@ -10,4 +10,4 @@ function Auth() {
   );
 }
 
-export default Auth;
+export default AuthScreen;

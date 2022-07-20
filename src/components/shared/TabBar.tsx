@@ -33,7 +33,7 @@ const defaultTabs: TabProps[] = [
  *
  * @returns
  */
-function TabBar(props: { tabs: TabProps[] }) {
+function TabBar(props: { tabs?: TabProps[] }) {
   const { tabs } = props ?? { tabs: defaultTabs };
   const appTabs = tabs ?? defaultTabs;
 

@@ -112,7 +112,7 @@ const InnerRouter = () => {
           element: <JournalScreen />,
         },
         {
-          path: 'journal/new',
+          path: '/journal/new',
           element: <NewEntry />,
         },
       ],

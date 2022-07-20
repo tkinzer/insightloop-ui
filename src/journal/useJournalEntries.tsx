@@ -1,37 +1,26 @@
-import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import React, { ReactNode, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useFirebaseContext } from '~/components/context/FirebaseContext';
-import { getFirestore, collection, getDocs, Firestore } from 'firebase/firestore/lite';
+import { collection, getDocs, Firestore } from 'firebase/firestore/lite';
 
 type JournalContext = {
   entries: any[];
-  setEntries: Dispatch<SetStateAction<never[]>>; // Dispatch<SetStateAction<never[]>>
   loading: boolean;
-  setLoading: (loading: boolean) => void;
-  error: any;
-  setError: (error: any) => void;
+  createEntry: (title: string, entry: string) => Promise<void>;
 };
 
 const defaultValue: JournalContext = {
   entries: [],
-  setEntries: () => {},
   loading: false,
-  setLoading: () => {},
-  error: null,
-  setError: () => {},
+  createEntry: () => Promise.resolve(),
 };
 
 const journalContext = React.createContext(defaultValue);
 
-const JournalProvider = (
-  props: React.PropsWithChildren<{
-    entries?: any[];
-  }>
-) => {
+export function JournalProvider(props: { children: ReactNode }) {
   const { children } = props;
   const [entries, setEntries] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
 
   const { firestore } = useFirebaseContext();
 
@@ -44,51 +33,88 @@ const JournalProvider = (
       console.error('No firestore');
       return;
     }
+    // const journalCollection = collection(firestore, 'journal');
+    fetchEntries();
+  }, [firestore]);
+
+  const fetchEntries = async () => {
+    console.log('fetching entries from firestore');
+    if (!firestore) {
+      console.error('No firestore');
+      setLoading(false);
+      return;
+    }
 
     const path = 'users/1/journal';
-    const snapshot = collection(firestore, path);
-    console.log('JournalProvider: useEffect get collection', snapshot);
+    // const snapshot = collection(firestore, path);
 
-    const fetchEntries = async () => {
-      console.log('fetching entries from firestore');
+    try {
+      await fetch(path)
+        .then((response) => response.json())
+        .then((response) => {
+          console.log('fetchEntries', response);
+          setEntries(response);
+          setLoading(false);
+        })
+        .catch((error) => {
+          console.error('fetchEntries', error);
+        });
+    } catch (error: any) {
+      console.error(error);
+      setLoading(false);
+    }
+  };
 
-      try {
-        // FIX: use firestore instead of firebase
-        // URL is not correct
-        await fetch('/api/journal')
-          .then((response) => response.json())
-          .then((response) => {
-            console.log('fetchEntries', response);
-            setEntries(response);
-            setLoading(false);
-          })
-          .catch((error) => {
-            console.error('fetchEntries', error);
-          });
-      } catch (error: any) {
-        console.error(error);
-        setError(error);
-        setLoading(false);
-      }
-    };
-    fetchEntries();
-  }, []);
+  function createEntry(entry: string, title?: string): Promise<void> {
+    console.log('saving entry', entry);
+    if (!firestore) {
+      console.error('No firestore');
+      return Promise.reject('No firestore');
+    }
+
+    try {
+      // const path = 'users/1/journal';
+      // const doc = collection(firestore, path).doc();
+      // const id = doc.id;
+      // const data = {
+      //   id,
+      //   title,
+      //   entry,
+      // };
+      // return doc.set(data);
+      const journalCollection = collection(firestore, 'users/1/journal');
+      const newEntry = {
+        title: title ?? '',
+        entry: entry,
+      };
+      console.log('newEntry', newEntry);
+    } catch (error: any) {
+      console.error(error);
+    }
+
+    // TODO add entry to firestore
+    // return collection(firestore, path).add(newEntry);
+
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        console.log('saved entry to api');
+        resolve();
+      }, 1000);
+    });
+  }
 
   return (
     <journalContext.Provider
       value={{
         entries,
-        setEntries,
         loading,
-        setLoading,
-        error,
-        setError,
+        createEntry,
       }}
     >
       {children}
     </journalContext.Provider>
   );
-};
+}
 
 /**
  * Data hook for journal entries
@@ -96,64 +122,12 @@ const JournalProvider = (
  */
 export default function useJournalEntries() {
   const navigate = useNavigate();
-  const context = React.useContext<JournalContext>(journalContext);
-  const { firebaseApp } = useFirebaseContext();
-  if (context === undefined) {
-    throw new Error('useEntries must be used within a JournalProvider');
-  }
-  const [entries, setEntries] = React.useState(context.entries ?? []);
-
-  useEffect(() => {
-    console.log('useJournalEntries', entries);
-    const getJournalEntries = async () => {
-      console.log('getJournalEntries');
-      try {
-        // FIX: use firestore instead of firebase
-        if (!firebaseApp) {
-          return;
-        }
-        const db = getFirestore(firebaseApp);
-
-        // Get a list of cities from your database
-        async function getCities(db: Firestore) {
-          const citiesCol = collection(db, 'cities');
-          const citySnapshot = await getDocs(citiesCol);
-          const cityList = citySnapshot.docs.map((doc) => doc.data());
-          return cityList;
-        }
-        // URL is not correct
-        // await fetch('/api/journal')
-        //   .then((response) => response.json())
-        //   .then((response) => {
-        //     console.log('getJournalEntries', response);
-        //     setEntries(response);
-        //   })
-        //   .catch((error) => {
-        //     console.error('getJournalEntries', error);
-        //   });
-      } catch (error: any) {
-        console.error(error);
-      }
-    };
-    getJournalEntries();
-  }, [context.entries]);
-
-  function addEntry() {
-    navigate('/journal/new');
-  }
-
-  function createEntry() {
-    console.log('saving entry to api');
-    // TODO submit the entry
-    navigate('/journal');
-  }
+  const { entries, loading, createEntry } = React.useContext<JournalContext>(journalContext);
+  const { firestore } = useFirebaseContext();
 
   return {
-    context,
     entries,
-    addEntry,
+    loading,
     createEntry,
   };
 }
-
-export { JournalProvider, useJournalEntries };
