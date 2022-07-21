@@ -1,5 +1,66 @@
 # InsightLoop
 
+## ToDo
+
+- [x] CRUD journal and insight entries
+- [x] Fix UI for tabs
+- [x] Display journal and insight entries for a user
+- [x] Clean up UI for the Journal
+- [x] Clean up UI for the Insights
+- [x] Clean up UI for the Profile
+
+## NextSteps
+
+- [x] For the next version. See this [PR](https://github.com/tkinzer/insightloop-ui/pull/3)
+- [x] CRUD Journal. See this [PR](https://github.com/tkinzer/insightloop-ui/pull/3)
+- [x] CRUD Insights. See this [PR](https://github.com/tkinzer/insightloop-ui/pull/4)
+- [x] User Profile. See this [PR](https://github.com/tkinzer/insightloop-ui/pull/5)
+- [x] UI upgrade. See this [PR](https://github.com/tkinzer/insightloop-ui/pull/6)
+
+---
+
+## Bit.dev Component Library
+
+npx @teambit/bvm install
+bit new react my-wiki --default-scope my-org.wiki
+bit start
+bit init
+bit install (recommended for workspace dependecy installation)
+bit start # to see the component rendered in isolation
+bit compile # to ensure compilation is successful
+bit test # run all tests in isolation
+bit check-types # validate type script types
+
+### Bit inside a monorepo
+
+If your project is using any monorepo tool, ensure you still run bit init at the root directory of your project. Not in any of the sub-projects of the monorepo.
+It is recommended to use Bit to track components from any sub-project, keep a single .bitmap and workspace.jsonc files for managing configuration and workflow.
+
+### Running dev services
+
+Dev services are component development procedures that are provided by envs. Even though different envs provide different implementations of these dev services, they all use the same standardized interfaces.
+
+For example, run the following command to compile your components' code:
+
+bit compile
+
+#### Copy
+
+The output lists all components affected by the compilation. Notice how the custom env and the component that uses it, were both compiled. That is so, even though each of them uses a different env.
+
+To learn more about specific development services see the following:
+
+Compiler
+Tester
+Builder
+Linter
+Formatter
+Generator (component templates)
+Docs
+Compositions
+
+## Package
+
 This starter uses following libraries:
 
 - Vite
@@ -53,53 +114,7 @@ NOTICE: The template does not use [eslint-plugin-prettier](https://github.com/pr
 
 Please read: https://prettier.io/docs/en/integrating-with-linters.html.
 
-# ToDo
+### Package ToDo
 
 - [x] install and set up [TailwindCSS/JIT](https://github.com/tailwindlabs/tailwindcss-jit) see this [PR](https://github.com/TeXmeijin/vite-react-ts-tailwind-starter/pull/1)
-
----
-
-### Support me!
-
-<a href="https://www.buymeacoffee.com/meijin" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
-
-## Bit.dev Component Library
-
-npx @teambit/bvm install
-bit new react my-wiki --default-scope my-org.wiki
-bit start
-
-bit init
-bit install (recommended for workspace dependecy installation)
-bit start # to see the component rendered in isolation
-bit compile # to ensure compilation is successful
-bit test # run all tests in isolation
-bit check-types # validate type script types
-
-Bit inside a monorepo
-If your project is using any monorepo tool, ensure you still run bit init at the root directory of your project. Not in any of the sub-projects of the monorepo.
-It is recommended to use Bit to track components from any sub-project, keep a single .bitmap and workspace.jsonc files for managing configuration and workflow.
-
-Running dev services
-Dev services are component development procedures that are provided by envs. Even though different envs provide different implementations of these dev services, they all use the same standardized interfaces.
-
-For example, run the following command to compile your components' code:
-
-bit compile
-Copy
-The output lists all components affected by the compilation. Notice how the custom env and the component that uses it, were both compiled. That is so, even though each of them uses a different env.
-
-STATUS COMPONENT ID
-✔ SUCCESS envs/my-react
-✔ SUCCESS ui/button
-Copy
-To learn more about specific development services see the following:
-
-Compiler
-Tester
-Builder
-Linter
-Formatter
-Generator (component templates)
-Docs
-Compositions
+- [x] install and set up [Lerna](https://github.com/lerna) see this [PR](https://github.com/tkinzer/insightloop-ui/pull/3)

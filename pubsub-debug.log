@@ -8,3 +8,5 @@ Jul 19, 2022 12:21:10 AM com.google.cloud.pubsub.testing.v1.Main main
 INFO: Server started, listening on 4202
 Jul 19, 2022 12:21:11 AM io.gapi.emulators.grpc.GrpcServer$3 operationComplete
 INFO: Adding handler(s) to newly registered Channel.
+*** shutting down gRPC server since JVM is shutting down
+*** server shut down
