@@ -1,5 +1,4 @@
-import { signInAnonymously } from 'firebase/auth';
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { useFirebaseContext } from '../context/FirebaseContext';
@@ -8,35 +7,21 @@ import splashImage from '../../assets/images/insightloop-splash-white-simple.png
 
 function LoginForm(): JSX.Element {
   const navigate = useNavigate();
-  const { auth, loginWithGoogle, user } = useFirebaseContext();
+  const { loginWithGoogle, user, loginGuest } = useFirebaseContext();
 
-  React.useEffect(() => {
+  const handleLogin = (e: React.MouseEvent<HTMLButtonElement>, fn: (onSuccess: () => void) => Promise<void>) => {
+    e.preventDefault();
+    console.log('login using', fn);
+    fn(() => {
+      navigate('/journal');
+    });
+  };
+
+  useEffect(() => {
     if (user) {
-      console.log('user', user);
       navigate('/journal');
     }
-  }, [user]);
-
-  const loginGuest = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    console.log('loginGuest');
-
-    if (!auth) {
-      console.error('No auth');
-      return;
-    }
-
-    signInAnonymously(auth)
-      .then((response) => {
-        if (response) {
-          console.log('signInAnonymously', response);
-        }
-      })
-      .finally(() => {
-        navigate('/home');
-      })
-      .catch((e) => console.error(e));
-  };
+  }, [user, navigate]);
 
   return (
     <>
@@ -55,7 +40,7 @@ function LoginForm(): JSX.Element {
                   <div className="mt-1 grid grid-cols-1 gap-3">
                     <div>
                       <GoogleLogin
-                        onClick={(e) => loginWithGoogle()}
+                        onClick={(e) => handleLogin(e, loginWithGoogle)}
                         className="w-full flex justify-center py-2 px-4 border-transparent border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
                       >
                         {/* <span className="sr-only">Sign in with Google</span> */}
@@ -65,7 +50,7 @@ function LoginForm(): JSX.Element {
                     <div>
                       <GuestLogin
                         className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                        onClick={(e) => loginGuest(e)}
+                        onClick={(e) => handleLogin(e, loginGuest)}
                       >
                         Login as Guest
                       </GuestLogin>

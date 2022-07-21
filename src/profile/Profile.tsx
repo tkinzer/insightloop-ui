@@ -23,9 +23,8 @@ function Profile() {
   const userName = user?.isAnonymous ? 'Anonymous' : user?.displayName;
 
   return (
-    <div className="flex flex-col gap-10 bg-emerald-400 min-h-16 h-full w-full">
+    <div className="flex flex-col gap-10  h-full w-full">
       <ProfileHeader userName={userName ?? ''} />
-      <p>{userName}</p>
       <ProfileBody />
     </div>
   );
@@ -36,10 +35,10 @@ function ProfileHeader(props: { userName: string; userPhotoUrl?: string; childre
   const roboHashUrl = 'https://robohash.org/' + userName;
 
   return (
-    <div className="flex flex-col items-center justify-center">
-      <img src={userPhotoUrl ?? roboHashUrl} alt="profile" className="w-full h-full" />
-      <span className="inline-flex items-center justify-center h-6 w-6 rounded-full bg-gray-500">
-        <span className="text-xs font-medium leading-none text-white">{userName}</span>
+    <div className="flex flex-col items-center justify-center gap-10 bg-emerald-400">
+      <img src={userPhotoUrl ?? roboHashUrl} alt="profile" className="w-30 h-30" />
+      <span className="inline-flex items-center justify-center w-1/4 rounded-full bg-gray-500">
+        <span className="text-lg font-medium leading-none text-white">{userName}</span>
       </span>
       {children}
     </div>
@@ -48,29 +47,14 @@ function ProfileHeader(props: { userName: string; userPhotoUrl?: string; childre
 
 function ProfileBody() {
   return (
-    <div className="flex flex-col items-center justify-center">
-      <FlatCards />
-    </div>
-  );
-}
-
-// TODO: <Item: React.PropsWithChildren<{}>>[]
-const items = [
-  { id: 1, title: 'Profile', icon: 'user', to: '/profile' },
-  { id: 2, title: 'Settings', icon: 'user', to: '/settings' },
-  { id: 3, title: 'logout', icon: 'user', to: '/logout' },
-];
-
-function FlatCards() {
-  return (
-    <div className="bg-white border border-gray-300 overflow-hidden rounded-md">
+    <div className="bg-white border border-gray-300 overflow-hidden rounded-md h-full">
       <ul role="list" className="divide-y divide-gray-300">
         {items.map((item) => (
           <li key={item.id} className="px-6 py-4">
             {/* Your content */}
-            <Link to={item.to}>
+            <Link to={item.to} className="flex gap-10">
               <Icon title={item.icon} />
-              {item.title}
+              <span>{item.title}</span>
             </Link>
           </li>
         ))}
@@ -78,6 +62,12 @@ function FlatCards() {
     </div>
   );
 }
+
+// TODO: <Item: React.PropsWithChildren<{}>>[]
+const items = [
+  { id: 2, title: 'Settings', icon: 'user', to: '/settings' },
+  { id: 3, title: 'logout', icon: 'user', to: '/logout' },
+];
 
 const Title = styled.h1`
   font-size: 2rem;

@@ -5,3 +5,5 @@ WARNING: Use --illegal-access=warn to enable warnings of further illegal reflect
 WARNING: All illegal access operations will be denied in a future release
 00:21:06.815 [NamespaceSystem-akka.actor.default-dispatcher-4] INFO akka.event.slf4j.Slf4jLogger - Slf4jLogger started
 00:21:07.060 [main] INFO com.firebase.server.forge.App$ - Listening at localhost:5555
+23:26:53.184 [Thread-0] INFO com.firebase.server.forge.App$ - Attempting graceful shutdown.
+23:26:53.357 [Thread-0] INFO com.firebase.server.forge.App$ - Graceful shutdown complete.

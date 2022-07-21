@@ -24,7 +24,6 @@ const PressScreen = lazy(() => import('~/components/screens/Press'));
 const ContactScreen = lazy(() => import('~/components/screens/Contact'));
 const PartnersScreen = lazy(() => import('~/components/screens/Partners'));
 const SupportScreen = lazy(() => import('~/components/screens/Support'));
-const HomeScreen = lazy(() => import('~/components/screens/Home'));
 
 export const Router = () => {
   return (
@@ -90,16 +89,6 @@ const InnerRouter = () => {
         {
           path: 'support',
           element: <SupportScreen />,
-        },
-      ],
-    },
-    {
-      path: '/home',
-      element: <Layout />,
-      children: [
-        {
-          index: true,
-          element: <HomeScreen />,
         },
       ],
     },

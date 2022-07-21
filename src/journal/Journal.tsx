@@ -21,8 +21,8 @@ export default function Journal(): JSX.Element {
 
       <SearchBar />
       <JournalEntries entries={entries} />
-      <FloatingButton onClick={(e) => goToCreateJournal}>
-        <PlusIcon />
+      <FloatingButton className="bg-indigo-600" onClick={(e) => goToCreateJournal(e)}>
+        <PlusIcon className="text-white" />
       </FloatingButton>
     </main>
   );
@@ -46,11 +46,10 @@ export const FloatingButton = styled.button`
   display: flex;
   justifycontent: center;
   alignitems: center;
-  bottom: 1rem;
+  bottom: 10vh;
   right: 1rem;
   height: 30px;
   width: 30px;
-  background-color: silver;
   color: var(--color-white);
   border: none;
   border-radius: 50%;
@@ -60,14 +59,6 @@ export const FloatingButton = styled.button`
   cursor: pointer;
   transition: all 0.3s ease-in-out;
   z-index: 1;
-
-  &:hover {
-    background-color: var(--color-primary-dark);
-  }
-
-  &:active {
-    background-color: var(--color-primary-dark);
-  }
 
   @media (min-width: 768px) {
     bottom: 2rem;
