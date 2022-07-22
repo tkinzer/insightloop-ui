@@ -12,10 +12,12 @@
 ## NextSteps
 
 - [x] For the next version. See this [PR](https://github.com/tkinzer/insightloop-ui/pull/3)
-- [x] CRUD Journal. See this [PR](https://github.com/tkinzer/insightloop-ui/pull/3)
+
 - [x] CRUD Insights. See this [PR](https://github.com/tkinzer/insightloop-ui/pull/4)
-- [x] User Profile. See this [PR](https://github.com/tkinzer/insightloop-ui/pull/5)
-- [x] UI upgrade. See this [PR](https://github.com/tkinzer/insightloop-ui/pull/6)
+- [x] Create Users when signing up
+- [x] setDoc with uid as user document ID
+
+<!-- - [x] UI upgrade. See this [PR](https://github.com/tkinzer/insightloop-ui/pull/6) -->
 
 ---
 

@@ -16,12 +16,12 @@ export const AuthProvider = (props: React.PropsWithChildren<{}>): JSX.Element =>
   const [provider, setProvider] = React.useState<GoogleAuthProvider>();
 
   const signOut = () => {
-    const auth = useAuth();
+    if (!auth) return;
     auth.signOut();
   };
 
   React.useEffect(() => {
-    const auth = useAuth();
+    if (!auth) return;
     setAuth(auth);
   }, []);
 
