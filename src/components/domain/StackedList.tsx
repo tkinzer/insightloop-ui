@@ -15,6 +15,11 @@ const activityItems = [
 
 type Item = {
   id: number;
+  entryText?: string;
+  title?: string;
+  content?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
 };
 
 interface StackedListProps {
@@ -22,24 +27,30 @@ interface StackedListProps {
   renderItem?: (item: Item) => React.ReactNode;
 }
 
-export default function StackedList(props?: StackedListProps) {
-  const [itemsToRender, setItemsToRender] = React.useState(props?.items || activityItems);
+export default function StackedList(props: StackedListProps) {
+  const [itemsToRender, setItemsToRender] = React.useState(props.items);
+
+  const renderItem = (item: Item) => {
+    return (
+      <div>
+        <h1>{item.id}</h1>
+      </div>
+    );
+  };
 
   return (
     <div>
       <ul role="list" className="divide-y divide-gray-200">
-        {activityItems.map((activityItem) => (
-          <li key={activityItem.id} className="py-4">
+        {itemsToRender.map((item) => (
+          <li key={item.id} className="py-4">
             <div className="flex space-x-3">
-              <img className="h-6 w-6 rounded-full" src={activityItem.person.imageUrl} alt="" />
+              <img className="h-6 w-6 rounded-full" src={'https://robohash.org/' + Math.random()} alt="" />
               <div className="flex-1 space-y-1">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-sm font-medium">{activityItem.person.name}</h3>
-                  <p className="text-sm text-gray-500">{activityItem.time}</p>
+                  <h3 className="text-sm font-medium">{item.id}</h3>
+                  <p className="text-sm text-gray-500">{item.id}</p>
                 </div>
-                <p className="text-sm text-gray-500">
-                  Deployed {activityItem.project} ({activityItem.commit} in master) to {activityItem.environment}
-                </p>
+                <p className="text-sm text-gray-500">{item.entryText || item.title || item.content}</p>
               </div>
             </div>
           </li>

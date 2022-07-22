@@ -55,11 +55,6 @@ const TabsContainer = styled.div`
   cursor: pointer;
   transition: all 0.3s ease-in-out;
   z-index: 1;
-
-  @media (min-width: 768px) {
-    bottom: 2rem;
-    right: 2rem;
-  }
 `;
 
 const TabBar = styled.div`

@@ -123,6 +123,12 @@ export const FirebaseProvider: FC<{ children: ReactNode }> = (props) => {
       if (user && user.uid && !isLoggedIn) {
         const idToken = await user.getIdToken();
         setProviderToken(idToken);
+        /**
+         * TODO: check if the user is already in the database
+         * if not, add the user to the database
+         * if so, update the user in the database
+         *
+         */
         setUser(user);
         setIsLoggedIn(true);
       } else {

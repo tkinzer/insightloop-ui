@@ -39,7 +39,7 @@ function TabBar(props: { tabs?: TabProps[] }) {
   const appTabs = tabs ?? defaultTabs;
 
   return (
-    <TabsContainer className="bg-indigo-400">
+    <TabsContainer className="bg-indigo-400 flex w-full">
       <Tab.Group>
         <Tab.List>
           {appTabs.map((tab) => (
@@ -81,8 +81,8 @@ export const TabsContainer = styled.div`
   transition: all 0.3s ease-in-out;
   z-index: 1;
 
-  @media (min-width: 768px) {
-    bottom: 2rem;
-    right: 2rem;
+  > * {
+    margin: 0;
+    width: 100%;
   }
 `;

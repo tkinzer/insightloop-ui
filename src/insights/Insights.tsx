@@ -1,7 +1,7 @@
 // import List from '@material-ui/core/List';
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { FloatingButton } from '~/journal/Journal';
+import FloatingButton from '~/components/shared/ui/FloatingButton';
 import useInsights from './useInsights';
 
 export default function Insights() {

@@ -10,19 +10,16 @@ export const NewEntry = () => {
   const entryRef = useRef<HTMLTextAreaElement>(null);
   const titleRef = useRef<HTMLInputElement>(null);
 
-  const handleSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     console.log('handleSubmit', entry, title);
-    createEntry(title, entry)
-      .then(() => {
-        console.log('saved entry to api');
-        setEntry('');
-        setTitle('');
-        navigate('/journal');
-      })
-      .catch((error: any) => {
-        console.error(error);
-      });
+    if (!entry || !title) {
+      console.log('entry or title is empty');
+      return;
+    } else {
+      console.log('create entry', title, entry);
+      createEntry(title, entry);
+    }
   };
 
   const handleEntryChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
