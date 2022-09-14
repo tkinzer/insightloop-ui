@@ -1,6 +1,7 @@
 import React, { ReactNode, useContext, useEffect, useState } from 'react';
 import { useFirebaseContext } from '~/components/context/FirebaseContext';
 import { addDoc, collection, getDocs, Unsubscribe } from 'firebase/firestore';
+import { UserContext, useUserState } from '~/components/context/UserContext';
 
 interface JournalEntryProps {
   id: string;
@@ -14,7 +15,7 @@ type JournalContext = {
   entries: JournalEntryProps[];
   loading: boolean;
   refresh: () => void;
-  createEntry: (title: string, entry: string) => void;
+  createEntry: (entry: string, title: string) => Promise<any>;
   deleteEntry?: (id: string) => Promise<void>;
   updateEntry?: (id: string, title: string, entry: string) => Promise<void>;
 };
@@ -23,7 +24,7 @@ const defaultValue: JournalContext = {
   entries: [],
   loading: false,
   refresh: () => {},
-  createEntry: () => {},
+  createEntry: () => Promise.resolve({}),
 };
 const journalContext = React.createContext<JournalContext>(defaultValue);
 
@@ -33,15 +34,19 @@ export function JournalProvider(props: { children: ReactNode }) {
   const [entries, setEntries] = useState<JournalEntryProps | any | null>(null);
   const [loading, setLoading] = useState(false);
   // FIX: change default query to use uid and collection
-  const [defaultQuery, setDefaultQuery] = useState<string>('users/PTvz4bNu9VuFeKE0DkYV/journal-entries');
+
+  const { state } = useUserState();
+  const userId = state.state === 'SIGNED_IN' ? state.uid : 'test';
+  const [defaultQuery, setDefaultQuery] = useState<string>(`users/${userId}/journal-entries`);
   const { firestore } = useFirebaseContext();
 
-  function createEntry(title: string, entry: string) {
-    console.log('create entry pipe', title, entry);
+  function createEntry(entry: string, title: string): Promise<any> {
+    console.log('createEntry', entry, title);
     if (!firestore) {
-      console.debug('firestore is not ready');
-      return;
+      throw new Error('Firestore is not available');
     }
+    setLoading(true);
+
     const newEntry = {
       title: title ?? '',
       entry: entry,
@@ -49,16 +54,21 @@ export function JournalProvider(props: { children: ReactNode }) {
       createdAt: new Date(),
       updatedAt: new Date(),
     };
-    setLoading(true);
-    addDoc(collection(firestore, defaultQuery), newEntry)
-      .then((docRef) => {
-        console.log('createEntry', docRef);
+
+    const docs = addDoc(collection(firestore, defaultQuery), newEntry)
+      .then(() => {
+        return getDocs(collection(firestore, defaultQuery));
+      })
+      .then((docs) => {
+        setEntries(docs);
         setLoading(false);
       })
-      .catch((err) => {
-        console.error(err);
+      .catch((error) => {
+        console.error(error);
         setLoading(false);
       });
+
+    return docs;
   }
 
   function refresh() {
@@ -105,11 +115,13 @@ export default function useJournalEntries(): JournalContext {
 
   // Update the entries when the user changes
   useEffect(() => {
-    console.log('updating entries', entries);
     if (!entries) {
-      refresh();
+      const refreshTimeout = setTimeout(() => {
+        refresh();
+      }, 1000);
+      return () => clearTimeout(refreshTimeout);
     }
-  }, [entries]);
+  }, []);
 
   return { entries, loading, createEntry, refresh };
 }

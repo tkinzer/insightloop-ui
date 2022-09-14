@@ -1,5 +1,5 @@
-import LoginForm from '../domain/LoginForm';
-import { Head } from '../shared/Head';
+import LoginForm from '../domain/form/LoginForm';
+import { Head } from '../layout/Head';
 
 function Index() {
   return (

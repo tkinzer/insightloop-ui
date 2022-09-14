@@ -7,6 +7,7 @@ export type UserState =
   | {
       state: 'SIGNED_IN';
       currentUser: User;
+      uid: string;
     }
   | {
       state: 'SIGNED_OUT';
@@ -21,6 +22,7 @@ const UserReducer = (state: UserState, action: UserActions): UserState => {
       return {
         state: 'SIGNED_IN',
         currentUser: action.payload.user,
+        uid: action.payload.user.uid,
       };
       break;
     case 'SIGN_OUT':

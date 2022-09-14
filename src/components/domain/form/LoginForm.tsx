@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
-import { useFirebaseContext } from '../context/FirebaseContext';
+import { useFirebaseContext } from '../../context/FirebaseContext';
 import EmailAndPasswordLoginForm from './EmailAndPasswordLoginForm';
 import splashImage from '../../assets/images/insightloop-splash-white-simple.png';
 
