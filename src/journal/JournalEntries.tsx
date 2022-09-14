@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import StackedList from '~/components/domain/StackedList';
+import StackedList from '~/components/layout/StackedList';
 
 export default function JournalEntries(props: { entries: any[] }) {
   const { entries } = props;

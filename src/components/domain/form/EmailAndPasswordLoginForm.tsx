@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useFirebaseContext } from '../context/FirebaseContext';
+import { useFirebaseContext } from '../../context/FirebaseContext';
 
 export default function EmailAndPasswordLoginForm() {
   const { auth, loginUserWithEmailAndPassword } = useFirebaseContext();

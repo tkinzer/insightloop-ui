@@ -1,6 +1,7 @@
 import React, { ReactNode, useContext, useEffect, useState } from 'react';
 import { useFirebaseContext } from '~/components/context/FirebaseContext';
 import { addDoc, collection, getDocs, Unsubscribe } from 'firebase/firestore';
+import { UserContext, useUserState } from '~/components/context/UserContext';
 
 interface JournalEntryProps {
   id: string;
@@ -33,7 +34,10 @@ export function JournalProvider(props: { children: ReactNode }) {
   const [entries, setEntries] = useState<JournalEntryProps | any | null>(null);
   const [loading, setLoading] = useState(false);
   // FIX: change default query to use uid and collection
-  const [defaultQuery, setDefaultQuery] = useState<string>('users/PTvz4bNu9VuFeKE0DkYV/journal-entries');
+
+  const { state } = useUserState();
+  const userId = state.state === 'SIGNED_IN' ? state.uid : 'test';
+  const [defaultQuery, setDefaultQuery] = useState<string>(`users/${userId}/journal-entries`);
   const { firestore } = useFirebaseContext();
 
   function createEntry(entry: string, title: string): Promise<any> {

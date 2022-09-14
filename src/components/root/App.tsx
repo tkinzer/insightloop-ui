@@ -1,4 +1,6 @@
+import React from 'react';
 import { HelmetProvider } from 'react-helmet-async';
+import { useNavigate } from 'react-router-dom';
 import { Router } from '~/components/router/Router';
 import { JournalProvider } from '~/journal/useJournalEntries';
 import { AuthProvider } from '../context/AuthContext';

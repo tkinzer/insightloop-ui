@@ -1,0 +1,139 @@
+// IMPORT
+@import url('https://fonts.googleapis.com/css?family=Muli:300,400,700,900');
+
+// VARIABLES
+// Colors
+$canvasBg: rgb(255, 226, 216);
+$frameColor: rgb(247, 247, 247);
+$iconColor: rgb(51, 51, 51);
+$bgColorWrap: ('rgb(216,216,255)', 'rgb(216,216,255)', 'rgb(255,216,216)', 'rgb(255,236,216)', 'rgb(255,255,216)');
+
+// Sizes
+$frameWidthMobile: 340px;
+$iconSize: 33px;
+
+// Structure
+$wrapWidth: ($iconSize * 2.5, $iconSize * 2.5, $iconSize * 2.2, $iconSize * 2, $iconSize * 2.65);
+
+// FUNCTIONS
+@function em($pixel, $number: 16) {
+  @return #{$pixel/$number}em;
+}
+
+// PLACEHOLDERS
+%frame {
+  width: $frameWidthMobile;
+  height: 620px;
+  background: $frameColor;
+  border-radius: 13px;
+  display: flex;
+  align-items: flex-end;
+  overflow: hidden;
+  box-shadow: 0 0 90px 7px darken($canvasBg, 10%);
+}
+
+// STRUCTURE
+// Body and Frame
+html {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: $canvasBg;
+  height: 100vh;
+  font-family: 'Muli', sans-serif;
+  .frame {
+    @extend %frame;
+  }
+}
+
+// Bar
+.bar {
+  width: $frameWidthMobile;
+  height: 70px;
+  background: #fff;
+  box-shadow: 0 10px 40px rgba(51, 51, 51, 0.4);
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  flex-direction: row;
+  padding: 0 15px;
+}
+
+// Icons
+.els-wrap {
+  display: flex;
+  align-items: center;
+  width: $iconSize;
+  background-size: 1200px;
+  background-position: 100% 50%;
+  color: $iconColor;
+  padding: 0 9px;
+  border-radius: 100px;
+  overflow: hidden;
+  text-decoration: none;
+  cursor: pointer;
+  transition: width 200ms, padding 200ms, border-radius 300ms, background-position 900ms;
+  transition-timing-function: ease-in-out;
+  &:hover {
+    // width: $iconSize *2.5;
+    background-position: 0 50%;
+    padding: 3px 13px;
+    border-radius: 50px;
+    .icon {
+      font-size: $iconSize - 6;
+      margin-right: 10px;
+    }
+    .label {
+      opacity: 1;
+    }
+  }
+  &:focus {
+    // width: $iconSize *2.5;
+    background-position: 0 50%;
+    padding: 3px 13px;
+    border-radius: 50px;
+    .icon {
+      font-size: $iconSize - 6;
+      margin-right: 10px;
+    }
+    .label {
+      opacity: 1;
+    }
+  }
+
+  .icon {
+    font-size: $iconSize;
+    margin-right: 25px;
+    position: relative;
+    z-index: 2;
+    transition: font-size 250ms, margin-right 200ms;
+    transition-timing-function: ease-out;
+  }
+  .label {
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    opacity: 0;
+    position: relative;
+    z-index: 2;
+    font-size: $iconSize/3;
+    transition: opacity 400ms;
+    transition-delay: 130ms;
+    transition-timing-function: ease-out;
+  }
+}
+
+// Icons Loops
+@for $i from 0 to length($bgColorWrap) {
+  .el-#{$i} {
+    background-image: radial-gradient(circle at right, #fff, unquote(nth($bgColorWrap, $i + 1)));
+  }
+}
+@for $i from 0 to length($wrapWidth) {
+  .el-#{$i}:hover {
+    width: nth($wrapWidth, $i + 1);
+  }
+  .el-#{$i}:focus {
+    width: nth($wrapWidth, $i + 1);
+  }
+}

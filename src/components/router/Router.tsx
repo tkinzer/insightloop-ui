@@ -1,5 +1,6 @@
+import React from 'react';
 import { lazy, Suspense } from 'react';
-import { RouteObject, useRoutes, BrowserRouter } from 'react-router-dom';
+import { RouteObject, useRoutes, BrowserRouter, useNavigate } from 'react-router-dom';
 // TODO: use lazy() to lazy load components for nested routes
 // TODO: use Suspense() to lazy load components for nested routes
 // TODO: use Route Object to define nested routes from the top level parent route
@@ -34,6 +35,13 @@ export const Router = () => {
 };
 
 const InnerRouter = () => {
+  const navigate = useNavigate();
+  // TODO - add automatic redirect to login if not logged in
+  const helmetContext = {};
+  const firebaseContext = {};
+  const authContext = {};
+  const userContext = {};
+
   const routes: RouteObject[] = [
     {
       path: '/',
@@ -137,10 +145,36 @@ const InnerRouter = () => {
       ],
     },
   ];
+
+  React.useEffect(() => {
+    if (!firebaseContext) {
+      // TODO - add a loading state
+      console.log('loading...');
+    }
+
+    if (!authContext) {
+      // TODO - redirect to login
+      console.log('redirecting to login...');
+    }
+
+    if (!authContext || !firebaseContext) {
+      // TODO - redirect to login
+      console.log('redirecting to login...');
+      navigate('/login');
+    }
+
+    // TODO - add a loading state
+    console.log('loaded');
+
+    // TODO - redirect to the profile if the user is logged in
+    // if (userContext) {
+    //   console.log('redirecting to profile...');
+    //   navigate('/profile');
+    // }
+  }, [firebaseContext, authContext]);
+
+  // TODO - set indexless routes to redirect to /journal
+  // TODO - rethink home route
   const element = useRoutes(routes);
-  return (
-    <div>
-      <Suspense fallback={<Loading />}>{element}</Suspense>
-    </div>
-  );
+  return <Suspense fallback={<Loading />}>{element}</Suspense>;
 };
